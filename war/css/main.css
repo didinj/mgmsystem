@@ -1,0 +1,56 @@
+@CHARSET "ISO-8859-1";
+html {
+	height:100%;
+}
+body {
+	background-color: #272262;
+	font-family: sans-serif, arial, helvetica, verdana;
+	height:100%;
+}
+
+#main {
+	width: 30%;
+	margin: auto;
+	text-align: center;
+}
+
+#login {
+	width: 250px;
+	background-color: #fff;
+	margin: 5px auto;
+}
+#login h3 {
+	padding-top: 5px;
+}
+
+#user,#pwd,#logbtn {
+	padding: 10px;
+}
+
+.logintxt {
+	width: 200px;
+	border:1px solid #ccc;
+	padding:3px;
+	font-size:16pt;
+	color:#707070;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.outshadow {
+	-moz-box-shadow: 0 0 5px 5px #888;
+	-webkit-box-shadow: 0 0 5px 5px #888;
+	box-shadow: 0 0 5px 5px #888;
+}
+
+.rounded {
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-khtml-border-radius: 10px;
+	border-radius: 10px;
+}
+.textshadow {
+	text-shadow: 2px 4px 3px rgba(0,0,0,0.3);
+}
