@@ -110,8 +110,9 @@ var edit = function(id) {
 		success : function(resp) {
 			var data = resp;
 			$("#company-select >option").remove();
-			$("#company-select").append("<option value='"+data.company.id+"'>"+data.company.raw.id+"</option>");
-			
+			$("#company-select").append(
+					"<option value='" + data.company.id + "'>"
+							+ data.company.raw.id + "</option>");
 
 			$("#invoice-list").hide();
 			$("#invoice-create").show();
@@ -205,6 +206,8 @@ var populateList = function() {
 							}
 							htm += '<tr>';
 							htm += '<td class="borright">'
+									+ data[i].kwitansi_nbr
+									+ '</td><td class="borright">'
 									+ data[i].invoice_nbr
 									+ '</td><td>'
 									+ data[i].company

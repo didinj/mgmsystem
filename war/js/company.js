@@ -90,3 +90,13 @@ var populateList = function() {
 				}
 			});
 }
+
+var addAddress = function() {
+	var rowcount = $("#company-address-table >tbody >tr").length;
+	var htm = "";
+	htm += "<tr><td><input type='text' id='address" + rowcount
+			+ "' name='address" + rowcount + "'/></td>"
+			+ "<td><input type='text' id='npwp" + rowcount + "' name='npwp"
+			+ rowcount + "' /></td><td><a href='delete'>Hapus</a></td></tr>";
+	$("#company-address-tbody").append(htm);
+}

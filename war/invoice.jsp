@@ -22,6 +22,7 @@
 		<table id="invoice-table-list" class="medround dropshadow">
 			<thead>
 				<tr>
+					<th class="borright">KWITANSI</th>
 					<th class="borright">NOMOR</th>
 					<th class="borright">NAMA PERUSAHAAN</th>
 					<th class="borright">PERIODE</th>

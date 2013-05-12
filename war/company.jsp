@@ -61,8 +61,16 @@
 				</tr>
 				<tr>
 					<td>Alamat</td>
-					<td><input type="text" name="company_address"
-						id="company_address" /></td>
+					<td><table id="company-address-table" class="rounded">
+							<thead>
+								<tr>
+									<th class="borright" width="20%">Address</th>
+									<th class="borright" width="20%">NPWP</th>
+									<th width="20%">Hapus</th>
+								</tr>
+							</thead>
+							<tbody id="company-address-tbody"></tbody>
+						</table></td>
 				</tr>
 				<tr>
 					<td>Kota</td>

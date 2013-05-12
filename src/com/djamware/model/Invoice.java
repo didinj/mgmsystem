@@ -11,6 +11,7 @@ public class Invoice {
 	@Id
 	Long id;
 	Key<Company> company;
+	String kwitansi_nbr;
 	String invoice_nbr;
 	String inv_period;
 	Date inv_startdate;
@@ -29,13 +30,14 @@ public class Invoice {
 	public Invoice() {
 	}
 
-	public Invoice(Key<Company> company, String invoice_nbr, String inv_period,
+	public Invoice(Key<Company> company, String kwitansi_nbr, String invoice_nbr, String inv_period,
 			Date inv_startdate, Date inv_enddate, Date create_date,
 			Date due_date, Date paid_date, Blob payment_struck,
 			Float fee_management, boolean ppn_10, boolean pph_23,
 			Float total_bill, Float receive_bill, Key<BankAccount> bankAccount) {
 		this();
 		this.company = company;
+		this.kwitansi_nbr = kwitansi_nbr;
 		this.invoice_nbr = invoice_nbr;
 		this.inv_period = inv_period;
 		this.inv_startdate = inv_startdate;
@@ -58,6 +60,14 @@ public class Invoice {
 
 	public void setCompany(Key<Company> company) {
 		this.company = company;
+	}
+
+	public String getKwitansi_nbr() {
+		return kwitansi_nbr;
+	}
+
+	public void setKwitansi_nbr(String kwitansi_nbr) {
+		this.kwitansi_nbr = kwitansi_nbr;
 	}
 
 	public String getInvoice_nbr() {
