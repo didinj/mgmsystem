@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServlet;
 
 import com.djamware.model.BankAccount;
 import com.djamware.model.Company;
+import com.djamware.model.CompanyAddress;
 import com.djamware.model.Invoice;
 import com.djamware.model.InvoiceDetail;
 import com.djamware.model.Users;
@@ -42,6 +43,7 @@ public class PrePopulateDataServlet extends HttpServlet {
 		ObjectifyService.register(Invoice.class);
 		ObjectifyService.register(InvoiceDetail.class);
 		ObjectifyService.register(Company.class);
+		ObjectifyService.register(CompanyAddress.class);
 		ObjectifyService.register(BankAccount.class);
 	}
 	

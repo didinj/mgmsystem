@@ -45,7 +45,7 @@
 			<input type="hidden" id="id" name="id" />
 			<table id="invoice-table-create">
 				<tr>
-					<td>Perusahaan</td>
+					<td>Alamat Perusahaan</td>
 					<td colspan="3"><select id="company-select"
 						name="company-select"></select></td>
 				</tr>
@@ -95,13 +95,14 @@
 						name="account-select"></select></td>
 				</tr>
 				<tr>
-					<td colspan="4">Rincian Tagihan</td>
+					<td>Rincian Tagihan</td>
+					<td colspan="3"><span id="rincian"><a href="#"
+							id="add-detail" onclick="addDetail()">Tambah Rincian</a></span></td>
 				</tr>
 				<tr>
-					<td valign="top"><span id="rincian"><a href="#"
-							id="add-detail" onclick="addDetail()">Tambah Rincian</a></span></td>
+					<td>&nbsp;</td>
 					<td colspan="3">
-						<table id="invoice-detail-table" class="rounded">
+						<table id="invoice-detail-table" class="rounded" style="width:100%">
 							<thead>
 								<tr>
 									<th class="borright" width="20%">Uraian</th>

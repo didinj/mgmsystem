@@ -10,25 +10,18 @@ public class Company {
 	String unit_nbr;
 	String company_name;
 	String company_initial;
-	String company_city;
-	String company_province;
-	String company_phone;
 	Date createdate;
 	Date updatedate;
 
 	public Company() {
 	}
 
-	public Company(String unit_nbr, String company_name,String company_initial, String company_city,
-			String company_province, String company_phone, Date createdate,
-			Date updatedate) {
+	public Company(String unit_nbr, String company_name,
+			String company_initial, Date createdate, Date updatedate) {
 		this();
 		this.unit_nbr = unit_nbr;
 		this.company_name = company_name;
 		this.company_initial = company_initial;
-		this.company_city = company_city;
-		this.company_province = company_province;
-		this.company_phone = company_phone;
 		this.createdate = createdate;
 		this.updatedate = updatedate;
 	}
@@ -55,30 +48,6 @@ public class Company {
 
 	public void setCompany_initial(String company_initial) {
 		this.company_initial = company_initial;
-	}
-
-	public String getCompany_city() {
-		return company_city;
-	}
-
-	public void setCompany_city(String company_city) {
-		this.company_city = company_city;
-	}
-
-	public String getCompany_province() {
-		return company_province;
-	}
-
-	public void setCompany_province(String company_province) {
-		this.company_province = company_province;
-	}
-
-	public String getCompany_phone() {
-		return company_phone;
-	}
-
-	public void setCompany_phone(String company_phone) {
-		this.company_phone = company_phone;
 	}
 
 	public Date getCreatedate() {

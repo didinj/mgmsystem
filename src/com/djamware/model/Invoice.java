@@ -10,7 +10,7 @@ import com.googlecode.objectify.Key;
 public class Invoice {
 	@Id
 	Long id;
-	Key<Company> company;
+	Key<CompanyAddress> compaddr;
 	String kwitansi_nbr;
 	String invoice_nbr;
 	String inv_period;
@@ -30,13 +30,14 @@ public class Invoice {
 	public Invoice() {
 	}
 
-	public Invoice(Key<Company> company, String kwitansi_nbr, String invoice_nbr, String inv_period,
-			Date inv_startdate, Date inv_enddate, Date create_date,
-			Date due_date, Date paid_date, Blob payment_struck,
-			Float fee_management, boolean ppn_10, boolean pph_23,
-			Float total_bill, Float receive_bill, Key<BankAccount> bankAccount) {
+	public Invoice(Key<CompanyAddress> compaddr, String kwitansi_nbr,
+			String invoice_nbr, String inv_period, Date inv_startdate,
+			Date inv_enddate, Date create_date, Date due_date, Date paid_date,
+			Blob payment_struck, Float fee_management, boolean ppn_10,
+			boolean pph_23, Float total_bill, Float receive_bill,
+			Key<BankAccount> bankAccount) {
 		this();
-		this.company = company;
+		this.compaddr = compaddr;
 		this.kwitansi_nbr = kwitansi_nbr;
 		this.invoice_nbr = invoice_nbr;
 		this.inv_period = inv_period;
@@ -54,12 +55,12 @@ public class Invoice {
 		this.bankAccount = bankAccount;
 	}
 
-	public Key<Company> getCompany() {
-		return company;
+	public Key<CompanyAddress> getCompaddr() {
+		return compaddr;
 	}
 
-	public void setCompany(Key<Company> company) {
-		this.company = company;
+	public void setCompaddr(Key<CompanyAddress> compaddr) {
+		this.compaddr = compaddr;
 	}
 
 	public String getKwitansi_nbr() {

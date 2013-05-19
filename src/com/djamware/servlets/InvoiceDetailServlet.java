@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.djamware.model.BankAccount;
-import com.djamware.model.Company;
+import com.djamware.model.CompanyAddress;
 import com.djamware.model.Invoice;
 import com.djamware.model.InvoiceDetail;
 import com.googlecode.objectify.Key;
@@ -126,13 +126,13 @@ public class InvoiceDetailServlet extends HttpServlet {
 
 			document.add(spacer);
 
-			Company comp = ofy.get(Company.class, invoice.getCompany().getId());
+			CompanyAddress ca = ofy.get(CompanyAddress.class, invoice.getCompaddr().getId());
 			Paragraph sendto = new Paragraph();
 			sendto.add(new Paragraph("Ditujukan ke:"));
-			sendto.add(new Paragraph(comp.getCompany_name(), boldFont));
-			sendto.add(new Paragraph(comp.getCompany_address()));
-			sendto.add(new Paragraph(comp.getCompany_city() + ", "
-					+ comp.getCompany_province()));
+			sendto.add(new Paragraph(ca.getCompany().getName(), boldFont));
+			sendto.add(new Paragraph(ca.getAddress()));
+			sendto.add(new Paragraph(ca.getCompany_city() + ", "
+					+ ca.getCompany_province()));
 			document.add(sendto);
 
 			document.add(spacer);
@@ -169,7 +169,7 @@ public class InvoiceDetailServlet extends HttpServlet {
 			amountcell.setPadding(5f);
 			invamount.addCell(amountcell);
 			amountcell = new PdfPCell(new Phrase(
-					"Biaya pelayanan pengamanan \n" + comp.getCompany_name()
+					"Biaya pelayanan pengamanan \n" + ca.getCompany().getName()
 							+ " \n \ndengan perincian terlampir"));
 			amountcell.setBorder(Rectangle.BOX);
 			amountcell.setPadding(5f);
@@ -402,7 +402,7 @@ public class InvoiceDetailServlet extends HttpServlet {
 			halcell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			hal.addCell(halcell);
 			halcell = new PdfPCell(new Phrase(": Pelayanan Pengamanan "
-					+ comp.getCompany_name(), boldFont));
+					+ ca.getCompany().getName(), boldFont));
 			halcell.setBorder(Rectangle.NO_BORDER);
 			halcell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			hal.addCell(halcell);

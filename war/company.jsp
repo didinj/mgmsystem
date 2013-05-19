@@ -24,31 +24,68 @@
 		<br>
 		<h1>Daftar Perusahaan/Client</h1>
 		<span id="baru"> <a href="#" onclick="create()">Baru</a></span>
-		<table id="company-table" class="medround">
+		<table id="company-table" class="medround" style="width: 60%">
 			<thead>
 				<tr>
-					<th width="5%" class="br">UNIT</th>
-					<th width="23%" class="br">NAMA PERUSAHAAN</th>
-					<th width="33%" class="br">ALAMAT</th>
-					<th width="12%" class="br">KOTA</th>
-					<th width="12%" class="br">PROVINSI</th>
-					<th width="10%" class="br">TELEPON</th>
-					<th width="5%">EDIT</th>
+					<th width="15%" class="br">UNIT</th>
+					<th width="50%" class="br">NAMA PERUSAHAAN</th>
+					<td width="15%" class="br">INISIAL</td>
+					<th width="20%">EDIT</th>
 				</tr>
 			</thead>
 			<tbody id="company-tbody"></tbody>
 		</table>
 		<label id="message"></label><br>
 	</div>
+	<div id="company-show" style="display: none" class="bottomround">
+		<br>
+		<h1>Detail Perusahaan</h1>
+		<span id="edit"></span>
+		<table id="company-show-table" class="medround">
+			<tbody>
+				<tr>
+					<td width="25%">UNIT</td>
+					<td width="75%" id="show-unit"></td>
+				</tr>
+				<tr>
+					<td>NAMA PERUSAHAAN</td>
+					<td id="show-nama"></td>
+				</tr>
+				<tr>
+					<td>INISIAL</td>
+					<td id="show-init"></td>
+				</tr>
+				<tr>
+				<td>ALAMAT</td>
+					<td>
+						<table>
+							<thead>
+								<tr>
+									<th class="borright" width="30%">Address</th>
+									<th class="borright" width="20%">NPWP</th>
+									<th class="borright" width="20%">Kota</th>
+									<th class="borright" width="20%">Propinsi</th>
+									<th width="10%">Telepon</th>
+								</tr>
+							</thead>
+							<tbody id="compadd-show-tbody"></tbody>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
 	<div id="company-create" style="display: none" class="bottomround">
 		<br>
 		<h1>Tambah Perusahaan</h1>
 		<form id="company-form">
 			<input type="hidden" id="id" name="id" />
-			<table>
+			<table style="width: 100%">
 				<tr>
-					<td>Unit</td>
-					<td><input type="text" name="unit_nbr" id="unit_nbr" /></td>
+					<td width="18%">Unit</td>
+					<td width="82%"><input type="text" name="unit_nbr"
+						id="unit_nbr" /></td>
 				</tr>
 				<tr>
 					<td>Nama Perusahaan</td>
@@ -61,29 +98,25 @@
 				</tr>
 				<tr>
 					<td>Alamat</td>
-					<td><table id="company-address-table" class="rounded">
+					<td><span id="rincian"><a href="#" id="add-addr"
+							onclick="addAddress()">Tambah Alamat</a></span></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td><table id="company-address-table" class="rounded"
+							style="width: 100%">
 							<thead>
 								<tr>
 									<th class="borright" width="20%">Address</th>
 									<th class="borright" width="20%">NPWP</th>
-									<th width="20%">Hapus</th>
+									<th class="borright" width="20%">Kota</th>
+									<th class="borright" width="20%">Propinsi</th>
+									<th class="borright" width="10%">Telepon</th>
+									<th width="10%">Hapus</th>
 								</tr>
 							</thead>
 							<tbody id="company-address-tbody"></tbody>
 						</table></td>
-				</tr>
-				<tr>
-					<td>Kota</td>
-					<td><input type="text" name="company_city" id="company_city" /></td>
-				</tr>
-				<tr>
-					<td>Provinsi</td>
-					<td><input type="text" name="company_province"
-						id="company_province" /></td>
-				</tr>
-				<tr>
-					<td>Telepon</td>
-					<td><input type="text" name="company_phone" id="company_phone" /></td>
 				</tr>
 				<tr>
 					<td colspan="2"><input type="button" id="save-button"

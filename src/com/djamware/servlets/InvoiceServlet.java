@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.djamware.model.BankAccount;
 import com.djamware.model.Company;
+import com.djamware.model.CompanyAddress;
 import com.djamware.model.Invoice;
 import com.djamware.model.InvoiceDetail;
 import com.google.appengine.api.datastore.Blob;
@@ -57,7 +58,8 @@ public class InvoiceServlet extends HttpServlet {
 				map.put("id", inv.getId().toString());
 				map.put("kwitansi_nbr", inv.getKwitansi_nbr());
 				map.put("invoice_nbr", inv.getInvoice_nbr());
-				Company comp = ofy.get(Company.class, inv.getCompany().getId());
+				CompanyAddress ca = ofy.get(CompanyAddress.class, inv.getCompaddr().getId());
+				Company comp = ofy.get(Company.class,ca.getCompany().getId());
 				map.put("company", comp.getCompany_name());
 				map.put("inv_period", inv.getInv_period());
 				map.put("create_date", df.format(inv.getCreate_date()));
@@ -109,8 +111,6 @@ public class InvoiceServlet extends HttpServlet {
 			}
 			out.println("Data telah di confirm");
 		} else {
-			Long compid = Long.parseLong(req.getParameter("company-select"));
-			Key<Company> company = new Key<Company>(Company.class, compid);
 			String kwitansi_nbr = req.getParameter("kwitansi_nbr");
 			Date create_date = null, due_date = null, inv_startdate = null, inv_enddate = null;
 			String cdate = req.getParameter("create_date");
@@ -170,11 +170,9 @@ public class InvoiceServlet extends HttpServlet {
 			}
 			Integer cmonth = (Integer.parseInt(cdate.substring(3, 5))) - 1;
 			String cyear = cdate.substring(6, 10);
-			Company comp = ofy
-					.query(Company.class)
-					.filter("id",
-							Long.parseLong(req.getParameter("company-select")))
-					.get();
+			Key<CompanyAddress> compaddr = new Key<CompanyAddress>(CompanyAddress.class,Long.parseLong(req.getParameter("company-select")));
+			CompanyAddress ca = ofy.get(CompanyAddress.class,compaddr.getId());
+			Company comp = ofy.get(Company.class,ca.getCompany().getId());
 			String invoice_nbr = nbr + "/MGM-" + comp.getCompany_initial()
 					+ "/SEC/" + months[cmonth] + "/" + cyear;
 			Long invid = null;
@@ -182,7 +180,7 @@ public class InvoiceServlet extends HttpServlet {
 					|| req.getParameter("id") == null) {
 				ofy = ObjectifyService.beginTransaction();
 				try {
-					Invoice invs = new Invoice(company, kwitansi_nbr, invoice_nbr,
+					Invoice invs = new Invoice(compaddr, kwitansi_nbr, invoice_nbr,
 							inv_period, inv_startdate, inv_enddate,
 							create_date, due_date, paid_date, payment_struck,
 							fee_management, ppn_10, pph_23, total_bill,
@@ -201,8 +199,8 @@ public class InvoiceServlet extends HttpServlet {
 				ofy = ObjectifyService.beginTransaction();
 				try {
 					Invoice invs = ofy.get(Invoice.class, id);
-					if (!invs.getCompany().equals(company))
-						invs.setCompany(company);
+					if (!invs.getCompaddr().equals(compaddr))
+						invs.setCompaddr(compaddr);
 					if (!invs.getKwitansi_nbr().equals(kwitansi_nbr))
 						invs.setKwitansi_nbr(kwitansi_nbr);
 					if (!invs.getInv_period().equals(inv_period))
