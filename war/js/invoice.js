@@ -25,10 +25,11 @@ var save = function() {
 	else
 		data[data.length] = new param("id", $("#id").val());
 	if ($("#company-select").val() == "")
-		data[data.length] = new param("company-select", "0");
+		data[data.length] = new param("compaddr-select", "0");
 	else
-		data[data.length] = new param("company-select", $("#company-select")
+		data[data.length] = new param("compaddr-select", $("#compaddr-select")
 				.val());
+	data[data.length] = new param("kwitansi_nbr", $("#kwitansi_nbr").val());
 	data[data.length] = new param("invmonth", $("#invmonth").val());
 	data[data.length] = new param("invyear", $("#invyear").val());
 	if ($("#inv_startdate").val() == "")
@@ -111,8 +112,8 @@ var edit = function(id) {
 			var data = resp;
 			$("#company-select >option").remove();
 			$("#company-select").append(
-					"<option value='" + data.company.id + "'>"
-							+ data.company.raw.id + "</option>");
+					"<option value='" + data.compaddr.id + "'>"
+							+ data.compaddr.address + "</option>");
 
 			$("#invoice-list").hide();
 			$("#invoice-create").show();
@@ -141,6 +142,39 @@ var populateSelectBox = function() {
 			for ( var i = 0; i < data.length; i++) {
 				selectBox.append('<option value="' + data[i].id + '">'
 						+ data[i].company_name + '</option>');
+			}
+		},
+		error : function(e) {
+			// calling the user defined error function
+			if (errorFn)
+				errorFn(e);
+		}
+	});
+}
+
+var populateSelectBox3 = function() {
+	var parameter = new Array();
+	parameter[parameter.length] = new param('compid', $('#company-select')
+			.val());
+	// making the ajax call
+	$.ajax({
+		url : "/companyservlet",
+		type : "GET",
+		dataType : "json",
+		data : parameter,
+		success : function(resp) {
+			// getting the select box element
+			var selectBox = $('#compaddr-select');
+			// setting the content inside as empty
+			selectBox.innerHTML = '';
+			// getting the data from the response object
+			var data = resp;
+			// appending the first option as select to the select box
+			selectBox.append('<option value="">Pilih Alamat</option>');
+			// adding all other values
+			for ( var i = 0; i < data.length; i++) {
+				selectBox.append('<option value="' + data[i].id + '">'
+						+ data[i].address + '</option>');
 			}
 		},
 		error : function(e) {
@@ -195,15 +229,15 @@ var populateList = function() {
 					if (data.length > 0) {
 						for ( var i = 0; i < data.length; i++) {
 							// creating a row
-							if (data[i].receive_bill != '-') {
+							if (data[i].is_confirm != null
+									|| data[i].is_confirm == true) {
 								confirmlink = 'Confirm';
-								editlink = 'Edit'
 							} else {
 								confirmlink = '<a href="#" class="edit-entity" onclick=\'confirm("'
 										+ data[i].id + '")\'>Confirm</a>';
-								editlink = '<a href="#" class="edit-entity" onclick=\'edit("'
-										+ data[i].id + '")\'>Edit</a>';
 							}
+							editlink = '<a href="#" class="edit-entity" onclick=\'edit("'
+									+ data[i].id + '")\'>Edit</a>';
 							htm += '<tr>';
 							htm += '<td class="borright">'
 									+ data[i].kwitansi_nbr
@@ -217,12 +251,8 @@ var populateList = function() {
 									+ data[i].create_date
 									+ '</td><td align="center" class="borright">'
 									+ data[i].due_date
-									+ '</td><td align="center" class="borright">'
-									+ data[i].paid_date
 									+ '</td><td align="right" class="borright">'
-									+ data[i].total_bill
-									+ '</td><td align="right" class="borright">'
-									+ data[i].receive_bill + '</td>';
+									+ data[i].total_bill + '</td>';
 							htm += '<td align="center">'
 									+ editlink
 									+ '/<a href="#" class="edit-entity" onclick=\'detail("'
@@ -236,6 +266,8 @@ var populateList = function() {
 								+ '">No items found</td></tr>';
 					}
 					$('#invoice-tbody').html(htm);
+					$("#invoice-tbody tr:odd").css("background-color",
+							"#ffffff");
 				},
 				error : function(e) {
 				}
@@ -245,15 +277,30 @@ var populateList = function() {
 var addDetail = function() {
 	var rowcount = $("#invoice-detail-table >tbody >tr").length;
 	var htm = "";
-	htm += "<tr><td><input type='text' id='description" + rowcount
-			+ "' name='description" + rowcount + "'/></td>"
-			+ "<td><input type='text' id='qty" + rowcount + "' name='qty"
-			+ rowcount + "' /></td>" + "<td><input type='text' id='price"
-			+ rowcount + "' name='price" + rowcount + "' onblur='total("
-			+ rowcount + ")' /></td>" + "<td id='total_price" + rowcount
+	htm += "<tr><td><input type='text' id='description"
+			+ rowcount
+			+ "' name='description"
+			+ rowcount
+			+ "'/></td>"
+			+ "<td><input style='text-align:center;' type='text' id='qty"
+			+ rowcount
+			+ "' name='qty"
+			+ rowcount
+			+ "' /></td>"
+			+ "<td><input class='rt' type='text' id='price"
+			+ rowcount
+			+ "' name='price"
+			+ rowcount
+			+ "' onblur='total("
+			+ rowcount
+			+ ")' /></td>"
+			+ "<td style='text-align: right;' id='total_price"
+			+ rowcount
 			+ "'></td><td style='display:none'><input type='text' id='detid"
-			+ rowcount + "' name='detid" + rowcount
-			+ "' /></td><td><a href='delete'>Hapus</a></td></tr>";
+			+ rowcount
+			+ "' name='detid"
+			+ rowcount
+			+ "' /></td><td><a href='#' class='ui-icon ui-icon-trash ct'>Hapus</a></td></tr>";
 	$("#detail-invoice-tbody").append(htm);
 }
 
@@ -279,6 +326,7 @@ var total1 = function() {
 
 var ppn;
 var pph;
+var tbill;
 
 var total2 = function() {
 	ppn = (parseFloat($("#total_bill").text()) * 10) / 100;
@@ -378,9 +426,21 @@ var detail = function(params) {
 }
 
 var confirm = function(params) {
-	$("#id").val(params);
-	$("#invoice-list").hide();
-	$("#confirm-invoice").show();
+	var parameter = new Array();
+	parameter[parameter.length] = new param('id', params);
+	$.ajax({
+		url : "/invoiceservlet",
+		type : "GET",
+		dataType : "json",
+		data : parameter,
+		success : function(resp) {
+			var data = resp;
+			$("#bank_account").text(data[1].bankname+" - "+data[1].accountnbr);
+			$("#invoice").text(data[0].invoice_nbr);
+			$("#invoice-list").hide();
+			$("#confirm-invoice").show();
+		}
+	});
 }
 
 var saveconfirm = function() {

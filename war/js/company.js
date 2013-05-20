@@ -23,7 +23,7 @@ var save = function() {
 	
 	var row = $("#company-address-table >tbody >tr").length;
 	data[data.length] = new param("address_row", row);
-	for ( var i = 0; i < row; i++) {
+/*	for ( var i = 0; i < row; i++) {
 		data[data.length] = new param("address" + i, $("#address" + i)
 				.val());
 		data[data.length] = new param("npwp" + i, $("#npwp" + i).val());
@@ -32,7 +32,7 @@ var save = function() {
 				.text());
 		data[data.length] = new param("company_phone" + i, $("#company_phone" + i).val());
 		data[data.length] = new param("addrid" + i, $("#addrid" + i).val());
-	}
+	}*/
 	// making the ajax call
 	$.ajax({
 		url : "/companyservlet",
@@ -58,19 +58,20 @@ var edit = function(id) {
 		data : parameter,
 		success : function(resp) {
 			var data = resp;
+			$("#id").val(id);
 			$("#unit_nbr").val(data[0].unit_nbr);
 			$("#company_name").val(data[0].company_name);
 			$("#company_initial").val(data[0].company_initial);
 			var htm = "";
 			for (var i = 1; i<data.length; i++) {
-				htm += "<tr><td><input type='text' id='address" + i
-				+ "' name='address" + i + "' value='"+data[i].address+"'/></td>"
-				+ "<td><input type='text' id='npwp" + i + "' name='npwp"
-				+ i + "' value='"+data[i].npwp+"' /></td><td><input type='text' name='company_city" 
-				+ i + "' id='company_city" + i + "' value='"+data[i].company_city+"' /></td><td><input type='text' name='company_province" 
-				+ i + "' id='company_province" + i + "' value='"+data[i].company_province+"' /></td><td><input type='text' name='company_phone" 
-				+ i + "' id='company_phone" + i + "' value='"+data[i].company_phone+"' /></td><td style='display:none'><input type='text' id='addrid"
-				+ i + "' name='addrid" + i	+ "' /></td><td><a href='delete'>Hapus</a></td></tr>";
+				htm += "<tr><td><input type='text' id='address" + (i-1)
+				+ "' name='address" + (i-1) + "' value='"+data[i].address+"'/></td>"
+				+ "<td><input type='text' id='npwp" + (i-1) + "' name='npwp"
+				+ (i-1) + "' value='"+data[i].npwp+"' /></td><td><input type='text' name='company_city" 
+				+ (i-1) + "' id='company_city" + (i-1) + "' value='"+data[i].company_city+"' /></td><td><input type='text' name='company_province" 
+				+ (i-1) + "' id='company_province" + (i-1) + "' value='"+data[i].company_province+"' /></td><td><input type='text' name='company_phone" 
+				+ (i-1) + "' id='company_phone" + (i-1) + "' value='"+data[i].company_phone+"' /></td><td style='display:none'><input type='text' id='addrid"
+				+ (i-1) + "' name='addrid" + (i-1)	+ "' value='"+data[i].id+"' /></td><td><a href='delete'>Hapus</a></td></tr>";
 			}
 			$('#company-address-tbody').append(htm);
 			$("#company-list").hide();
@@ -130,7 +131,7 @@ var populateList = function() {
 							htm += '<td class="br" align="center">'
 									+ data[i].unit_nbr + '</td><td class="br"><a href="#" class="show-entity" onclick=\'show("'+data[i].id+'","show")\'>'
 									+ data[i].company_name
-									+ '</a></td><td class="br">'
+									+ '</a></td><td class="br ct">'
 									+ data[i].company_initial
 									+ '</td>';
 							htm += '<td align="center"><a href="#" class="edit-entity" onclick=\'edit("'
@@ -140,6 +141,8 @@ var populateList = function() {
 						htm += '<tr><td colspan="7">No items found</td></tr>';
 					}
 					$('#company-tbody').html(htm);
+					$("#company-tbody tr:odd").css("background-color",
+					"#ffffff");
 				},
 				error : function(e) {
 				}
@@ -156,6 +159,8 @@ var addAddress = function() {
 			+ rowcount + "' id='company_city" + rowcount + "' /></td><td><input type='text' name='company_province" 
 			+ rowcount + "' id='company_province" + rowcount + "' /></td><td><input type='text' name='company_phone" 
 			+ rowcount + "' id='company_phone" + rowcount + "' /></td><td style='display:none'><input type='text' id='addrid"
-			+ rowcount + "' name='addrid" + rowcount	+ "' /></td><td><a href='delete'>Hapus</a></td></tr>";
+			+ rowcount + "' name='addrid" + rowcount	+ "' /></td><td><a href='#' class='ui-icon ui-icon-trash ct'>Hapus</a></td></tr>";
 	$("#company-address-tbody").append(htm);
+	$("#npwp" + rowcount).mask("99.999.999.9-999.999");
+	$("#company_phone" + rowcount).mask("(999)9999-9999");
 }

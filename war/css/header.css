@@ -1,66 +1,117 @@
-@CHARSET "ISO-8859-1";
+/* For modern browsers */
+.clearfix:before,.clearfix:after {
+	content: "";
+	display: table;
+}
+
+.clearfix:after {
+	clear: both;
+}
+
+/* For IE 6/7 (trigger hasLayout) */
+.clearfix {
+	*zoom: 1;
+}
+
+#main {
+	width: 100%;
+	margin: auto;
+}
+
+#head {
+	float: left;
+	width: 100%;
+	background-color: #ffffff;
+	border-top: 1px solid #bdd3fe;
+	border-left: 1px solid #bdd3fe;
+	border-right: 1px solid #bdd3fe;
+}
+
+#content {
+	float: left;
+	width: 100%;
+	padding-top: 10px;
+}
 
 #header {
-	background-color: #e8e8f4;
-	height: 100px;
-	color: #272262;
-	-webkit-box-shadow: 0 8px 6px -6px black;
-	-moz-box-shadow: 0 8px 6px -6px black;
-	box-shadow: 0 8px 6px -6px black;
+	float: left;
+	width: 100%;
 }
+
 #logo {
 	float: left;
-	width: 60%;
+	width: 50%;
 }
 
 #userinfo {
-	float: right;
-	width: 40%;
+	float: left;
+	width: 49%;
+	padding-top: 1%;
+	padding-right: 1%;
 	text-align: right;
-	padding-top: 40px;
 }
 
-#userinfo a:link,a:visited {
-	text-decoration:none;
-	padding-right:20px;
+a {
+	text-decoration: none;
+	color: #3b71b5;
 }
 
-#userinfo a:active,a:hover {
-	text-decoration:none;
-	color: #272262;
-	padding-right:20px;
+a:hover {
+	color: #5e93fd;
 }
 
 #nav {
-	width: 100%;
 	float: left;
-	margin: 0 0 3em 0;
+	width: 100%;
+}
+
+/****************** NAVIGATION MENU ******************/
+ul {
+	margin: 0;
 	padding: 0;
 	list-style: none;
-	background-color: #f2f2f2;
-	border-bottom: 1px solid #ccc;
-	border-top: 1px solid #ccc;
-	-webkit-box-shadow: 0 8px 6px -6px black;
-	-moz-box-shadow: 0 8px 6px -6px black;
-	box-shadow: 0 8px 6px -6px black;
-}
-#nav a {
-	padding:3px !important;
 }
 
-#nav li {
+ul li {
+	display: block;
+	position: relative;
 	float: left;
 }
 
-#nav li a {
-	display: block;
-	text-decoration: none;
-	font-weight: bold;
-	color: #069;
-	border-right: 1px solid #ccc;
+li ul {
+	display: none;
 }
 
-#nav li a:hover {
-	color: #c00;
-	background-color: #fff;
+ul li a {
+	display: block;
+	text-decoration: none;
+	color: #ffffff;
+	border-top: 1px solid #ffffff;
+	padding: 5px 15px 5px 15px;
+	background: #6395f8 url(custom-theme/images/ui-bg_glass_75_6395f8_1x400.png) 50% 50% repeat-x;
+	margin-left: 1px;
+	white-space: nowrap;
+}
+
+ul li a:hover {
+	background: #e5ecf9 url(images/ui-bg_glass_75_e5ecf9_1x400.png) 50% 50% repeat-x;
+	color: #5e93fd;
+}
+
+li:hover ul {
+	display: block;
+	position: absolute;
+}
+
+li:hover li {
+	float: none;
+	font-size: 11px;
+}
+
+li:hover a {
+	background: #3b3b3b;
+}
+
+li:hover li a:hover {
+	background: #1e7c9a;
 }

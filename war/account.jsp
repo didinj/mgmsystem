@@ -11,20 +11,14 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>MGM Invoice : Bank Account</title>
-<style type="text/css">
-@import "css/account.css";
-
-@import "css/header.css";
-</style>
 <script src='js/jquery-1.7.2.min.js'></script>
 <script src='js/account.js'></script>
 </head>
 <body>
 
-	<div id="account-list" class="bottomround">
-		<br>
+	<div id="account-list">
 		<h1>Daftar Rekening</h1>
-		<span id="baru"> <a href="#" onclick="create()">Baru</a></span>
+		<button onclick="create()" class="button">Rekening Baru</button></span>
 		<table id="account-table" class="medround">
 			<thead>
 				<tr>
@@ -38,15 +32,14 @@
 		</table>
 		<label id="message"></label><br>
 	</div>
-	<div id="account-create" style="display: none" class="bottomround">
-		<br>
+	<div id="account-create" style="display: none">
 		<h1>Tambah Rekening</h1>
 		<form id="account-form">
 			<input type="hidden" id="id" name="id" />
 			<table>
 				<tr>
-					<td>Nama Bank</td>
-					<td><input type="text" name="bankname" id="bankname" /></td>
+					<td width="18%">Nama Bank</td>
+					<td width="82%"><input type="text" name="bankname" id="bankname" /></td>
 				</tr>
 				<tr>
 					<td>Nomor Rekening</td>
@@ -67,6 +60,11 @@
 	<script type="text/javascript">
 		$(window).load(function() {
 			init();
+		});
+		
+		$(document).ready(function() {
+			$(".button").button();
+			$("#add-addr,#save-button,#edit").button();
 		});
 	</script>
 </body>

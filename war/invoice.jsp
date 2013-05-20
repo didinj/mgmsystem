@@ -13,14 +13,12 @@
 <title>MGM Invoice</title>
 </head>
 <body>
-
-	<div id="invoice-list" class="bottomround">
-		<br>
+	<div id="invoice-list">
 		<h1>Daftar Invoice</h1>
-		<span id="baru"> <a href="#" onclick="create()">Baru</a>
-		</span> <br>
-		<table id="invoice-table-list" class="medround dropshadow">
-			<thead>
+		<button class="button" onclick="create()">Invoice Baru</button>
+		<br>
+		<table id="invoice-table-list">
+			<thead class="ui-widget-header">
 				<tr>
 					<th class="borright">KWITANSI</th>
 					<th class="borright">NOMOR</th>
@@ -28,9 +26,7 @@
 					<th class="borright">PERIODE</th>
 					<th class="borright">TGL INVOICE</th>
 					<th class="borright">JATUH TEMPO</th>
-					<th class="borright">TGL BAYAR</th>
 					<th class="borright">TOTAL INVOICE</th>
-					<th class="borright">TOTAL BAYAR</th>
 					<th>TINDAKAN</th>
 				</tr>
 			</thead>
@@ -38,20 +34,30 @@
 		</table>
 		<br> <label id="message"></label>
 	</div>
-	<div id="invoice-create" style="display: none" class="bottomround">
-		<br>
+	<div id="invoice-create" style="display: none">
 		<h1>Invoice Baru</h1>
 		<form id="invoice-form">
 			<input type="hidden" id="id" name="id" />
-			<table id="invoice-table-create">
+			<table id="invoice-table-create" class="ui-corner-all">
+				<tr>
+					<td>Nomor Kwitansi</td>
+					<td><input type="text" name="kwitansi_nbr" id="kwitansi_nbr" /></td>
+					<td colspan="2">&nbsp;</td>
+				</tr>
+				<tr>
+					<td>Perusahaan</td>
+					<td><select id="company-select" name="company-select"
+						onchange="populateSelectBox3();"></select></td>
+					<td colspan="2">&nbsp;</td>
+				</tr>
 				<tr>
 					<td>Alamat Perusahaan</td>
-					<td colspan="3"><select id="company-select"
-						name="company-select"></select></td>
+					<td><select id="compaddr-select" name="compaddr-select"></select></td>
+					<td colspan="2">&nbsp;</td>
 				</tr>
 				<tr>
 					<td>Periode Tagihan</td>
-					<td><select id="invmonth" name="invmonth">
+					<td><select id="invmonth" name="invmonth" class="hwidth">
 							<option value="0">Pilih Bulan</option>
 							<option value="Januari">Januari</option>
 							<option value="Februari">Februari</option>
@@ -65,7 +71,7 @@
 							<option value="Oktober">Oktober</option>
 							<option value="Nopember">Nopember</option>
 							<option value="Desember">Desember</option>
-					</select> <select id="invyear" name="invyear">
+					</select> <select id="invyear" name="invyear" class="hwidth">
 							<option value="0">Pilih Tahun</option>
 							<option value="2009">2009</option>
 							<option value="2010">2010</option>
@@ -78,9 +84,13 @@
 							<option value="2017">2017</option>
 							<option value="2018">2018</option>
 					</select></td>
-					<td>Tgl Awal: <input type="text" name="inv_startdate"
+				</tr>
+				<tr>
+					<td width="15%">Tgl Awal</td>
+					<td width="35%"><input type="text" name="inv_startdate"
 						id="inv_startdate" /></td>
-					<td>Tgl Akhir: <input type="text" name="inv_enddate"
+					<td width="15%">Tgl Akhir</td>
+					<td width="35%"><input type="text" name="inv_enddate"
 						id="inv_enddate" /></td>
 				</tr>
 				<tr>
@@ -91,32 +101,33 @@
 				</tr>
 				<tr>
 					<td>Rekening Bank</td>
-					<td colspan="3"><select id="account-select"
-						name="account-select"></select></td>
+					<td><select id="account-select" name="account-select"></select></td>
+					<td colspan="2">&nbsp;</td>
 				</tr>
 				<tr>
 					<td>Rincian Tagihan</td>
-					<td colspan="3"><span id="rincian"><a href="#"
-							id="add-detail" onclick="addDetail()">Tambah Rincian</a></span></td>
+					<td colspan="3"><span id="rincian"><a id="add-detail"
+							onclick="addDetail()">Tambah Rincian</a></span></td>
 				</tr>
 				<tr>
 					<td>&nbsp;</td>
 					<td colspan="3">
-						<table id="invoice-detail-table" class="rounded" style="width:100%">
+						<table id="invoice-detail-table" class="rounded"
+							style="width: 100%">
 							<thead>
 								<tr>
-									<th class="borright" width="20%">Uraian</th>
-									<th class="borright" width="20%">Jumlah</th>
+									<th class="borright" width="40%">Uraian</th>
+									<th class="borright" width="10%">Jumlah</th>
 									<th class="borright" width="20%">Harga</th>
 									<th class="borright" width="20%">Total Harga</th>
-									<th width="20%">Hapus</th>
+									<th width="10%">Hapus</th>
 								</tr>
 							</thead>
 							<tbody id="detail-invoice-tbody"></tbody>
 							<tfoot id="detail-invoice-tfoot">
 								<tr>
 									<td colspan="3" align="center">SUB TOTAL</td>
-									<td id="total_detail"></td>
+									<td class=rt id="total_detail"></td>
 									<td>&nbsp;</td>
 								</tr>
 							</tfoot>
@@ -126,7 +137,7 @@
 				<tr>
 					<td>Manajemen Fee</td>
 					<td><input type="checkbox" id="feecheck" onclick="checkfee()" />&nbsp;<span
-						id="feeman" style="display: none"><select id="selectmfee"
+						id="feeman" style="display: none"><select class="hwidth" id="selectmfee"
 							onchange="checkselectedmfee()"><option value="fromsub">10%
 									Subtotal</option>
 								<option value="manualmfee">Input Manual</option></select></span></td>
@@ -155,7 +166,7 @@
 					<td id="total_bill"></td>
 				</tr>
 				<tr>
-					<td colspan="2"><input type="button" id="save-button"
+					<td colspan="4" style="border-top: 2px solid #bdd3fe;"><input type="button" id="save-button"
 						value="Simpan" onclick="save()" /><input type="reset"
 						id="reset-invoice" style="display: none" /></td>
 				</tr>
@@ -169,29 +180,38 @@
 			<input type="text" style="display: none" name="id" id="id" />
 			<table id="invoice-confirm-table">
 				<tr>
-					<td>Tanggal Pembayaran</td>
-					<td><input type="text" name="paid_date" id="paid_date" /></td>
+					<td>Rekening Bank</td>
+					<td id="bank_account"></td>
 				</tr>
 				<tr>
-					<td>Total Pembayaran</td>
-					<td><input type="text" name="receive_bill" id="receive_bill" /></td>
+					<td>Nomor Invoice</td>
+					<td id="invoice"></td>
+				</tr>
+				<tr>
+					<td>Tanggal Penerimaan</td>
+					<td><input type="text" name="receive_date" id="receive_date" /></td>
+				</tr>
+				<tr>
+					<td>Total Penerimaan</td>
+					<td><input type="text" name="receive_amount" id="receive_amount" /></td>
+				</tr>
+				<tr>
+					<td>Selisih</td>
+					<td id="selisih"></td>
+				</tr>
+				<tr>
+					<td>Catatan</td>
+					<td><textarea cols="80" rows="3" name="notes" id="notes"></textarea></td>
 				</tr>
 				<tr>
 					<td colspan="2"><input type="button" id="save-button"
-						value="Konfirmasi" onclick="saveconfirm()" /><input type="reset"
+						value="Konfirmasi" onclick="saveconfirm()" style="width: 100px !important;" /><input type="reset"
 						id="reset-invoice-confirm" style="display: none" /></td>
 				</tr>
 			</table>
 		</form>
 	</div>
 
-	<div id="dialog-overlay"></div>
-	<div id="dialog-box" class="rounded outshadow">
-		<div class="dialog-content">
-			<div id="detail-invoice"></div>
-			<a href="#" class="button">Tutup</a>
-		</div>
-	</div>
 	<div id="loading"
 		style="display: none; position: fixed; top: 50%; left: 50%; margin-top: -17px; margin-left: -17px; width: 100%; height: 100%;">
 		<p>
@@ -204,12 +224,10 @@
 						function() {
 							init();
 							$(
-									"#create_date,#due_date,#inv_startdate,#inv_enddate,#paid_date")
-									.datepick($.extend({
-										showTrigger : '#calImg',
-										altField : '#l10nAlternate',
-										altFormat : 'DD, d MM, yyyy'
-									}, $.datepick.regional['id']));
+									"#create_date,#due_date,#inv_startdate,#inv_enddate,#receive_date")
+									.datepicker({
+										dateFormat : "dd/mm/yy"
+									});
 						});
 		$(document).ready(function() {
 
@@ -224,6 +242,9 @@
 			}).bind("ajaxComplete", function() {
 				$(this).hide();
 			});
+
+			$(".button").button();
+			$("#add-detail,#save-button").button();
 
 		});
 	</script>

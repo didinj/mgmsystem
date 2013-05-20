@@ -1,42 +1,43 @@
 <html>
 <head>
 <title><sitemesh:write property='title' /></title>
-<style type="text/css">
-@import "css/smoothness.datepick.css";
-
-@import "css/header.css";
-
-@import "css/invoice.css";
-</style>
-<script src='js/jquery-1.7.2.min.js'></script>
-<script src='js/jquery.datepick.min.js'></script>
-<script src='js/jquery.datepick-id.js'></script>
+<link href='http://fonts.googleapis.com/css?family=Merriweather+Sans'
+	rel='stylesheet' type='text/css'>
+<link href="css/custom-theme/jquery-ui-1.10.3.custom.css"
+	rel="stylesheet">
+<link href="css/header.css" rel="stylesheet">
+<link href="css/invoice.css" rel="stylesheet">
+<script src="js/jquery-1.9.1.js"></script>
+<script src="js/jquery-ui-1.10.3.custom.js"></script>
+<script src='js/jquery.maskedinput.min.js'></script>
 <script src='js/invoice.js'></script>
 <sitemesh:write property='head' />
 </head>
 <body>
-	<div id="invoice-main">
-		<div id="header" class="topround">
-			<div id="logo">
-				<img src="images/mgmhead.png" />
+	<div id="main" class="clearfix">
+		<div id="head" class="ui-corner-top">
+			<div id="header">
+				<div id="logo">
+					<img src="images/mgmhead.png" />
+				</div>
+				<div id="userinfo">
+					<span id="fullname" class="textshadow"><%=session.getAttribute("fullname")%>,</span>
+					<span id="logout" class="textshadow"><a
+						href="<%=session.getAttribute("logout")%>">Sign out</a></span>
+				</div>
 			</div>
-			<div id="userinfo">
-				<span id="fullname" class="textshadow"><%=session.getAttribute("fullname")%>,</span>
-				<span id="logout" class="textshadow"><a
-					href="<%=session.getAttribute("logout")%>">Sign out</a></span>
+			<div id="nav">
+				<ul id="menu">
+					<li><a href="/invoice">INVOICE</a></li>
+					<li><a href="/journal">JURNAL</a></li>
+					<li><a href="/company">PERUSAHAAN</a></li>
+					<li><a href="/account">REKENING</a></li>
+				</ul>
 			</div>
 		</div>
-		<div>
-			<ul id="nav">
-				<li class="navhome"><a href="/invoice">INVOICE</a></li>
-				<li><a href="/journal">JURNAL</a></li>
-				<li><a href="/company">PERUSAHAAN</a></li>
-				<li><a href="/account">REKENING</a></li>
-			</ul>
-
+		<div id="content" class="ui-corner-bottom ui-widget-content">
+			<sitemesh:write property='body' />
 		</div>
-
-		<sitemesh:write property='body' />
 
 		<div class='disclaimer'>
 			<p align="center">&copy;2013 PT. Mitra Garda Mandiri. Allright

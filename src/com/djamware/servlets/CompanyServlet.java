@@ -60,6 +60,19 @@ public class CompanyServlet extends HttpServlet {
 				}
 				out.println(gson.toJson(calist));
 			}
+		} else if (req.getParameterMap().containsKey("compid")) {
+			Long id = Long.parseLong(req.getParameter("compid"));
+			Company company = ofy.query(Company.class).filter("id", id)
+					.get();
+			List<CompanyAddress> ca = ofy.query(CompanyAddress.class).filter("company",company).list();
+			@SuppressWarnings("rawtypes")
+			List calist = new ArrayList();
+			Iterator<CompanyAddress> iterator = ca.iterator();
+			while (iterator.hasNext()) {
+				CompanyAddress caddr = (CompanyAddress) iterator.next();
+				calist.add(caddr);
+			}
+			out.println(gson.toJson(calist));
 		} else {
 			List<Company> company = ofy.query(Company.class).list();
 			@SuppressWarnings("rawtypes")
@@ -113,6 +126,7 @@ public class CompanyServlet extends HttpServlet {
 				company.setUpdatedate(new Date());
 				ofy.put(company);
 				ofy.getTxn().commit();
+				compid = id;
 			} finally {
 				if (ofy.getTxn().isActive())
 					ofy.getTxn().rollback();

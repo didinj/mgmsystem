@@ -9,7 +9,7 @@ import com.googlecode.objectify.Key;
 public class Payment {
 	@Id
 	Long id;
-	Key<BankAccount> bankAccount;
+	Key<BankAccount> bank_account;
 	Date receive_date;
 	Key<Invoice> invoice;
 	Float receive_amount;
@@ -19,23 +19,24 @@ public class Payment {
 	public Payment() {
 	}
 
-	public Payment(Key<BankAccount> bankAccount, Date receive_date,
+	public Payment(Key<BankAccount> bank_account, Date receive_date,
 			Key<Invoice> invoice, Float receive_amount, Float gap, String notes) {
 		this();
-		this.bankAccount = bankAccount;
+		this.bank_account = bank_account;
 		this.receive_date = receive_date;
 		this.invoice = invoice;
 		this.receive_amount = receive_amount;
 		this.gap = gap;
 		this.notes = notes;
 	}
+	
 
-	public Key<BankAccount> getBankAccount() {
-		return bankAccount;
+	public Key<BankAccount> getBank_account() {
+		return bank_account;
 	}
 
-	public void setBankAccount(Key<BankAccount> bankAccount) {
-		this.bankAccount = bankAccount;
+	public void setBank_account(Key<BankAccount> bank_account) {
+		this.bank_account = bank_account;
 	}
 
 	public Date getReceive_date() {

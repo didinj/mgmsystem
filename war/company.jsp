@@ -11,21 +11,16 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>MGM Client</title>
-<style type="text/css">
-@import "css/company.css";
-
-@import "css/header.css";
-</style>
 <script src='js/jquery-1.7.2.min.js'></script>
 <script src='js/company.js'></script>
 </head>
 <body>
-	<div id="company-list" class="bottomround">
-		<br>
+	<div id="company-list">
 		<h1>Daftar Perusahaan/Client</h1>
-		<span id="baru"> <a href="#" onclick="create()">Baru</a></span>
-		<table id="company-table" class="medround" style="width: 60%">
-			<thead>
+		<button class="button" onclick="create()">Perusahaan Baru</button>
+		<br>
+		<table id="company-table">
+			<thead class="ui-widget-header">
 				<tr>
 					<th width="15%" class="br">UNIT</th>
 					<th width="50%" class="br">NAMA PERUSAHAAN</th>
@@ -37,15 +32,14 @@
 		</table>
 		<label id="message"></label><br>
 	</div>
-	<div id="company-show" style="display: none" class="bottomround">
-		<br>
+	<div id="company-show" style="display: none">
 		<h1>Detail Perusahaan</h1>
-		<span id="edit"></span>
-		<table id="company-show-table" class="medround">
+		<span id="edit" style="width:60px !important; padding-top:0 !important;"></span>
+		<table id="company-show-table" style="border:none !important;">
 			<tbody>
 				<tr>
-					<td width="25%">UNIT</td>
-					<td width="75%" id="show-unit"></td>
+					<td width="18%">UNIT</td>
+					<td width="82%" id="show-unit"></td>
 				</tr>
 				<tr>
 					<td>NAMA PERUSAHAAN</td>
@@ -76,12 +70,11 @@
 		</table>
 
 	</div>
-	<div id="company-create" style="display: none" class="bottomround">
-		<br>
+	<div id="company-create" style="display: none">
 		<h1>Tambah Perusahaan</h1>
 		<form id="company-form">
 			<input type="hidden" id="id" name="id" />
-			<table style="width: 100%">
+			<table style="width: 100%" class="ui-corner-all">
 				<tr>
 					<td width="18%">Unit</td>
 					<td width="82%"><input type="text" name="unit_nbr"
@@ -107,12 +100,12 @@
 							style="width: 100%">
 							<thead>
 								<tr>
-									<th class="borright" width="20%">Address</th>
-									<th class="borright" width="20%">NPWP</th>
-									<th class="borright" width="20%">Kota</th>
-									<th class="borright" width="20%">Propinsi</th>
-									<th class="borright" width="10%">Telepon</th>
-									<th width="10%">Hapus</th>
+									<th class="borright" width="25%">Address</th>
+									<th class="borright" width="15%">NPWP</th>
+									<th class="borright" width="14%">Kota</th>
+									<th class="borright" width="19%">Propinsi</th>
+									<th class="borright" width="12%">Telepon</th>
+									<th width="5%">Hapus</th>
 								</tr>
 							</thead>
 							<tbody id="company-address-tbody"></tbody>
@@ -129,6 +122,11 @@
 	<script type="text/javascript">
 		$(window).load(function() {
 			init();
+		});
+		
+		$(document).ready(function() {
+			$(".button").button();
+			$("#add-addr,#save-button,#edit").button();
 		});
 	</script>
 </body>

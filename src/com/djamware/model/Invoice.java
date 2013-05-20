@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.persistence.Id;
 
-import com.google.appengine.api.datastore.Blob;
 import com.googlecode.objectify.Key;
 
 public class Invoice {
@@ -18,24 +17,21 @@ public class Invoice {
 	Date inv_enddate;
 	Date create_date;
 	Date due_date;
-	Date paid_date;
-	Blob payment_struck;
 	Float fee_management;
 	boolean ppn_10;
 	boolean pph_23;
 	Float total_bill;
-	Float receive_bill;
 	Key<BankAccount> bankAccount;
+	boolean is_confirm;
 
 	public Invoice() {
 	}
 
 	public Invoice(Key<CompanyAddress> compaddr, String kwitansi_nbr,
 			String invoice_nbr, String inv_period, Date inv_startdate,
-			Date inv_enddate, Date create_date, Date due_date, Date paid_date,
-			Blob payment_struck, Float fee_management, boolean ppn_10,
-			boolean pph_23, Float total_bill, Float receive_bill,
-			Key<BankAccount> bankAccount) {
+			Date inv_enddate, Date create_date, Date due_date,
+			Float fee_management, boolean ppn_10, boolean pph_23,
+			Float total_bill, Key<BankAccount> bankAccount, boolean is_confirm) {
 		this();
 		this.compaddr = compaddr;
 		this.kwitansi_nbr = kwitansi_nbr;
@@ -45,14 +41,12 @@ public class Invoice {
 		this.inv_enddate = inv_enddate;
 		this.create_date = create_date;
 		this.due_date = due_date;
-		this.paid_date = paid_date;
-		this.payment_struck = payment_struck;
 		this.fee_management = fee_management;
 		this.ppn_10 = ppn_10;
 		this.pph_23 = pph_23;
 		this.total_bill = total_bill;
-		this.receive_bill = receive_bill;
 		this.bankAccount = bankAccount;
+		this.is_confirm = is_confirm;
 	}
 
 	public Key<CompanyAddress> getCompaddr() {
@@ -119,22 +113,6 @@ public class Invoice {
 		this.due_date = due_date;
 	}
 
-	public Date getPaid_date() {
-		return paid_date;
-	}
-
-	public void setPaid_date(Date paid_date) {
-		this.paid_date = paid_date;
-	}
-
-	public Blob getPayment_struck() {
-		return payment_struck;
-	}
-
-	public void setPayment_struck(Blob payment_struck) {
-		this.payment_struck = payment_struck;
-	}
-
 	public Float getFee_management() {
 		return fee_management;
 	}
@@ -167,14 +145,6 @@ public class Invoice {
 		this.total_bill = total_bill;
 	}
 
-	public Float getReceive_bill() {
-		return receive_bill;
-	}
-
-	public void setReceive_bill(Float receive_bill) {
-		this.receive_bill = receive_bill;
-	}
-
 	public Key<BankAccount> getBankAccount() {
 		return bankAccount;
 	}
@@ -185,6 +155,14 @@ public class Invoice {
 
 	public Long getId() {
 		return id;
+	}
+
+	public boolean isIs_confirm() {
+		return is_confirm;
+	}
+
+	public void setIs_confirm(boolean is_confirm) {
+		this.is_confirm = is_confirm;
 	}
 
 }

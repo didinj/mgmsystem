@@ -71,7 +71,7 @@ var populateList = function() {
 						for ( var i = 0; i < data.length; i++) {
 							// creating a row
 							htm += '<tr>';
-							htm += '<td class="br" align="center">' + data[i].bankname + '</td><td class="br">'
+							htm += '<td class="br">' + data[i].bankname + '</td><td class="br" align="center">'
 									+ data[i].accountnbr + '</td><td class="br">'
 									+ data[i].accountname + '</td>';
 							htm += '<td align="center"><a href="#" class="edit-entity" onclick=\'edit("'
@@ -82,6 +82,8 @@ var populateList = function() {
 						htm += '<tr><td colspan="7">No items found</td></tr>';
 					}
 					$('#account-tbody').html(htm);
+					$("#account-tbody tr:odd").css("background-color",
+					"#ffffff");
 				},
 				error : function(e) {
 				}
