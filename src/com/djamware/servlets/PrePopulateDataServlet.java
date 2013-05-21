@@ -26,6 +26,7 @@ import com.djamware.model.Company;
 import com.djamware.model.CompanyAddress;
 import com.djamware.model.Invoice;
 import com.djamware.model.InvoiceDetail;
+import com.djamware.model.Payment;
 import com.djamware.model.Users;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
@@ -45,6 +46,7 @@ public class PrePopulateDataServlet extends HttpServlet {
 		ObjectifyService.register(Company.class);
 		ObjectifyService.register(CompanyAddress.class);
 		ObjectifyService.register(BankAccount.class);
+		ObjectifyService.register(Payment.class);
 	}
 	
 	@Override

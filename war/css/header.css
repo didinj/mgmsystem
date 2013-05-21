@@ -94,7 +94,7 @@ ul li a {
 }
 
 ul li a:hover {
-	background: #e5ecf9 url(images/ui-bg_glass_75_e5ecf9_1x400.png) 50% 50% repeat-x;
+	background: #e5ecf9 url(custom-theme/images/ui-bg_glass_75_e5ecf9_1x400.png) 50% 50% repeat-x;
 	color: #5e93fd;
 }
 

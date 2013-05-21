@@ -48,8 +48,13 @@ public class InvoiceServlet extends HttpServlet {
 			Long id = Long.parseLong(req.getParameter("id"));
 			Invoice invoice = ofy.query(Invoice.class).filter("id", id).get();
 			invlist.add(invoice);
-			BankAccount ba = ofy.get(BankAccount.class, invoice.getBankAccount().getId());
+			BankAccount ba = ofy.get(BankAccount.class, invoice
+					.getBankAccount().getId());
+			CompanyAddress ca = ofy.get(CompanyAddress.class, invoice.getCompaddr().getId());
+			Company co = ofy.get(Company.class, ca.getCompany().getId());
 			invlist.add(ba);
+			invlist.add(ca);
+			invlist.add(co);
 			out.println(gson.toJson(invlist));
 		} else {
 			List<Invoice> invoice = ofy.query(Invoice.class).list();
@@ -70,6 +75,10 @@ public class InvoiceServlet extends HttpServlet {
 				map.put("create_date", df.format(inv.getCreate_date()));
 				map.put("due_date", df.format(inv.getDue_date()));
 				map.put("total_bill", nf.format(inv.getTotal_bill()));
+				if (inv.isIs_confirm() == true)
+					map.put("is_confirm", "true");
+				else 
+					map.put("is_confirm", "false");
 				invlist.add(gson.toJson(map));
 				// System.out.println(inv.getCompany().getName());
 			}

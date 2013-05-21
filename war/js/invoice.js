@@ -110,11 +110,11 @@ var edit = function(id) {
 		data : parameter,
 		success : function(resp) {
 			var data = resp;
-			$("#company-select >option").remove();
-			$("#company-select").append(
-					"<option value='" + data.compaddr.id + "'>"
-							+ data.compaddr.address + "</option>");
-
+			$("select[id$=company-select] > option").remove();
+			$("select[id$=company-select]").append('<option value="">Pilih Perusahaan</option>');
+			populateSelectBox();
+			$("select[id$=account-select] > option").remove();
+			populateSelectBox2();
 			$("#invoice-list").hide();
 			$("#invoice-create").show();
 		}
@@ -229,8 +229,7 @@ var populateList = function() {
 					if (data.length > 0) {
 						for ( var i = 0; i < data.length; i++) {
 							// creating a row
-							if (data[i].is_confirm != null
-									|| data[i].is_confirm == true) {
+							if (data[i].is_confirm == "true") {
 								confirmlink = 'Confirm';
 							} else {
 								confirmlink = '<a href="#" class="edit-entity" onclick=\'confirm("'
@@ -436,7 +435,10 @@ var confirm = function(params) {
 		success : function(resp) {
 			var data = resp;
 			$("#bank_account").text(data[1].bankname+" - "+data[1].accountnbr);
-			$("#invoice").text(data[0].invoice_nbr);
+			$("#bank_account_id").val(data[1].id);
+			$("#invoice_id").val(data[0].id);
+			$("#invoice_nbr").text(data[0].invoice_nbr);
+			$("#total_tagihan").val(data[0].total_bill);
 			$("#invoice-list").hide();
 			$("#confirm-invoice").show();
 		}
@@ -447,11 +449,13 @@ var saveconfirm = function() {
 	var data = new Array();
 	data[data.length] = new param("confirm", "true");
 	data[data.length] = new param("id", $("#id").val());
-	data[data.length] = new param("paid_date", $("#paid_date").val());
-	data[data.length] = new param("receive_bill", $("#receive_bill").val());
+	data[data.length] = new param("receive_date", $("#receive_date").val());
+	data[data.length] = new param("receive_amount", $("#receive_amount").val());
+	data[data.length] = new param("bank_account_id", $("#bank_account_id").val());
+	data[data.length] = new param("invoice_id", $("#invoice_id").val());
 	// making the ajax call
 	$.ajax({
-		url : "/invoiceservlet",
+		url : "/paymentservlet",
 		type : "POST",
 		data : data,
 		success : function(data) {

@@ -178,35 +178,44 @@
 		<h1>Konfirmasi Pembayaran</h1>
 		<form id="invoice-confirm-form">
 			<input type="text" style="display: none" name="id" id="id" />
-			<table id="invoice-confirm-table">
+			<table id="invoice-confirm-table" class="ui-corner-all">
 				<tr>
-					<td>Rekening Bank</td>
-					<td id="bank_account"></td>
+					<td width="18%">Rekening Bank</td>
+					<td width="42%" id="bank_account"></td>
+					<td width="30%"><input type="text" name="total_tagihan" id="total_tagihan" style="display:none;" /></td>
 				</tr>
 				<tr>
 					<td>Nomor Invoice</td>
-					<td id="invoice"></td>
+					<td id="invoice_nbr"></td>
+					<td>&nbsp;</td>
 				</tr>
 				<tr>
 					<td>Tanggal Penerimaan</td>
 					<td><input type="text" name="receive_date" id="receive_date" /></td>
+					<td>&nbsp;</td>
 				</tr>
 				<tr>
 					<td>Total Penerimaan</td>
-					<td><input type="text" name="receive_amount" id="receive_amount" /></td>
+					<td><input type="text" name="receive_amount" id="receive_amount" onblur="$('#selisih').text($(this).val()-$('#total_tagihan').val())" /></td>
+					<td>&nbsp;</td>
 				</tr>
 				<tr>
 					<td>Selisih</td>
 					<td id="selisih"></td>
+					<td>&nbsp;</td>
 				</tr>
 				<tr>
 					<td>Catatan</td>
 					<td><textarea cols="80" rows="3" name="notes" id="notes"></textarea></td>
+					<td>&nbsp;</td>
 				</tr>
 				<tr>
 					<td colspan="2"><input type="button" id="save-button"
 						value="Konfirmasi" onclick="saveconfirm()" style="width: 100px !important;" /><input type="reset"
-						id="reset-invoice-confirm" style="display: none" /></td>
+						id="reset-invoice-confirm" style="display: none" /><input type="reset"
+						id="bank_account_id" style="display: none" /><input type="reset"
+						id="invoice_id" style="display: none" /></td>
+						<td>&nbsp;</td>
 				</tr>
 			</table>
 		</form>
@@ -245,7 +254,6 @@
 
 			$(".button").button();
 			$("#add-detail,#save-button").button();
-
 		});
 	</script>
 </body>

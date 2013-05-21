@@ -37,7 +37,8 @@ public class PaymentServlet extends HttpServlet {
 		PrintWriter out = resp.getWriter();
 
 		// Long id = Long.parseLong(req.getParameter("id"));
-		Long accid = Long.parseLong(req.getParameter("bank_account"));
+		System.out.println(req.getParameter("bank_account_id"));
+		Long accid = Long.parseLong(req.getParameter("bank_account_id"));
 		Key<BankAccount> bankAccount = new Key<BankAccount>(BankAccount.class,
 				accid);
 		Date receive_date = null;
@@ -46,7 +47,7 @@ public class PaymentServlet extends HttpServlet {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		Long invid = Long.parseLong(req.getParameter("invoice"));
+		Long invid = Long.parseLong(req.getParameter("invoice_id"));
 		Key<Invoice> invoice = new Key<Invoice>(Invoice.class, invid);
 		Float receive_amount = Float.parseFloat(req
 				.getParameter("receive_amount"));

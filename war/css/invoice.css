@@ -57,7 +57,7 @@ input,select {
 	vertical-align: middle;
 }
 
-#invoice-create input,#invoice-create select,#company-create input,#company-create select,#account-create input,#account-create select {
+#invoice-create input,#invoice-create select,#company-create input,#company-create select,#account-create input,#account-create select, #confirm-invoice input {
 	width: 100%;
 	border: 1px solid #bdd3fe;
 	padding: 3px;
@@ -74,6 +74,14 @@ input,select {
 #save-button {
 	margin-top: 10px;
 	width: 60px !important;
+}
+
+textarea {
+	width: 100%;
+	height: 60px;
+	border: 1px solid #bdd3fe;
+	padding: 5px;
+	color: rgb(59, 113, 181);
 }
 
 .hwidth {
