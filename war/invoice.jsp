@@ -47,7 +47,7 @@
 				<tr>
 					<td>Perusahaan</td>
 					<td><select id="company-select" name="company-select"
-						onchange="populateSelectBox3();"></select></td>
+						onchange="populateSelectBox3(null,null);"></select></td>
 					<td colspan="2">&nbsp;</td>
 				</tr>
 				<tr>

@@ -55,7 +55,17 @@ public class InvoiceServlet extends HttpServlet {
 			invlist.add(ba);
 			invlist.add(ca);
 			invlist.add(co);
-			out.println(gson.toJson(invlist));
+			@SuppressWarnings("rawtypes")
+			List detlist = new ArrayList();
+			Key<Invoice> invkey = new Key<Invoice>(Invoice.class,id);
+			List<InvoiceDetail> invdet = ofy.query(InvoiceDetail.class).filter("invoice",invkey).list();
+			Iterator<InvoiceDetail> iterator = invdet.iterator();
+			Map<String, String> map = new HashMap<String, String>();
+			while (iterator.hasNext()) {
+				InvoiceDetail idt = (InvoiceDetail) iterator.next();
+				detlist.add(idt);
+			}
+			out.println("{\"invoice\":"+gson.toJson(invlist)+",\"detail\":"+gson.toJson(detlist)+"}");
 		} else {
 			List<Invoice> invoice = ofy.query(Invoice.class).list();
 			@SuppressWarnings("rawtypes")

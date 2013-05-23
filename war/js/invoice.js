@@ -6,9 +6,9 @@ var create = function() {
 	$("#invoice-list").hide();
 	$("#invoice-create").show();
 	$("select[id$=company-select] > option").remove();
-	populateSelectBox();
+	populateSelectBox(null);
 	$("select[id$=account-select] > option").remove();
-	populateSelectBox2();
+	populateSelectBox2(null);
 }
 
 // parameter object definition
@@ -109,12 +109,80 @@ var edit = function(id) {
 		dataType : "json",
 		data : parameter,
 		success : function(resp) {
-			var data = resp;
+			var data = resp.invoice;
+			$("#id").val(data[0].id);
+			$("#kwitansi_nbr").val(data[0].kwitansi_nbr);
 			$("select[id$=company-select] > option").remove();
-			$("select[id$=company-select]").append('<option value="">Pilih Perusahaan</option>');
-			populateSelectBox();
+			populateSelectBox(data[3].id, data[2].id);
+			var invdt = data[0].inv_period.split(" ");
+			$("#invmonth").val(invdt[0]);
+			$("#invyear").val(invdt[1]);
+			var orgsdate = $.datepicker.formatDate('dd/mm/yy', new Date(
+					data[0].inv_startdate));
+			$("#inv_startdate").val(orgsdate);
+			var orgedate = $.datepicker.formatDate('dd/mm/yy', new Date(
+					data[0].inv_enddate));
+			$("#inv_enddate").val(orgedate);
+			var orgcdate = $.datepicker.formatDate('dd/mm/yy', new Date(
+					data[0].create_date));
+			$("#create_date").val(orgcdate);
+			var orgddate = $.datepicker.formatDate('dd/mm/yy', new Date(
+					data[0].due_date));
+			$("#due_date").val(orgddate);
 			$("select[id$=account-select] > option").remove();
-			populateSelectBox2();
+			populateSelectBox2(data[1].id);
+			var det = resp.detail;
+			for(var i=0;i<det.length;i++) {
+				var htm = "";
+				htm += "<tr><td><input type='text' id='description"
+						+ i
+						+ "' name='description"
+						+ i
+						+ "' value="+det[i].description+"/></td>"
+						+ "<td><input style='text-align:center;' type='text' id='qty"
+						+ i
+						+ "' name='qty"
+						+ i
+						+ "' value="+det[i].qty+" /></td>"
+						+ "<td><input class='rt' type='text' id='price"
+						+ i
+						+ "' name='price"
+						+ i
+						+ "' onblur='total("
+						+ i
+						+ ")' value="+det[i].price+" /></td>"
+						+ "<td style='text-align: right;' id='total_price"
+						+ i
+						+ "'>"+det[i].total_price+"</td><td style='display:none'><input type='text' id='detid"
+						+ i
+						+ "' name='detid"
+						+ i
+						+ "' value="+det[i].id+" /></td><td><a href='#' class='ui-icon ui-icon-trash ct'>Hapus</a></td></tr>";
+				$("#detail-invoice-tbody").append(htm);
+			}
+			total_detail();
+			$("#total_bill").text(data[0].total_bill);
+			if(data[0].fee_management!=""||data[0].fee_management!="0") {
+				$("#feecheck").prop("checked","checked");
+				$("#feeman").show();
+				$("#fee_management").val(data[0].fee_management);
+				if((data[0].fee_management*100)/$("#total_detail").text()==10) {
+					$("#selectmfee").val("fromsub");
+				} else {
+					$("#selectmfee").val("manualmfee");
+					$("#manmfee").show();
+				}
+				$("#total1").text(parseFloat($("#total_detail").text())+parseFloat($("#fee_management").val()));
+			}
+			if(data[0].ppn_10==true) {
+				$("#ppncheck").prop("checked","checked");
+				$("#total2").text((parseFloat($("#total1").text()*10)/100)+parseFloat($("#total1").text()));
+			}
+			if(data[0].pph_23==true) {
+				$("#pphcheck").prop("checked","checked");
+				var pph = parseFloat(($("#fee_management").val() * 2) / 100);
+				$("#total_bill").text(parseFloat($("#total_bill").text() - pph));
+			}
 			$("#invoice-list").hide();
 			$("#invoice-create").show();
 		}
@@ -123,7 +191,7 @@ var edit = function(id) {
 
 // function to populate the select box which takes input as id of the selectbox
 // element and url to get the data
-var populateSelectBox = function() {
+var populateSelectBox = function(id, addrid) {
 	// making the ajax call
 	$.ajax({
 		url : "/companyservlet",
@@ -136,12 +204,21 @@ var populateSelectBox = function() {
 			selectBox.innerHTML = '';
 			// getting the data from the response object
 			var data = resp;
+			$("select[id$=company-select] > option").remove();
 			// appending the first option as select to the select box
 			selectBox.append('<option value="">Pilih Perusahaan</option>');
 			// adding all other values
 			for ( var i = 0; i < data.length; i++) {
-				selectBox.append('<option value="' + data[i].id + '">'
-						+ data[i].company_name + '</option>');
+				if (id == data[i].id) {
+					selectBox.append('<option value="' + data[i].id
+							+ '" selected="selected">' + data[i].company_name
+							+ '</option>');
+					$("select[id$=compaddr-select] > option").remove();
+					populateSelectBox3(addrid, data[i].id);
+				} else {
+					selectBox.append('<option value="' + data[i].id + '">'
+							+ data[i].company_name + '</option>');
+				}
 			}
 		},
 		error : function(e) {
@@ -152,10 +229,13 @@ var populateSelectBox = function() {
 	});
 }
 
-var populateSelectBox3 = function() {
+var populateSelectBox3 = function(id, cid) {
 	var parameter = new Array();
-	parameter[parameter.length] = new param('compid', $('#company-select')
-			.val());
+	if (cid != null)
+		parameter[parameter.length] = new param('compid', cid);
+	else
+		parameter[parameter.length] = new param('compid', $('#company-select')
+				.val());
 	// making the ajax call
 	$.ajax({
 		url : "/companyservlet",
@@ -169,12 +249,19 @@ var populateSelectBox3 = function() {
 			selectBox.innerHTML = '';
 			// getting the data from the response object
 			var data = resp;
+			$("select[id$=compaddr-select] > option").remove();
 			// appending the first option as select to the select box
 			selectBox.append('<option value="">Pilih Alamat</option>');
 			// adding all other values
 			for ( var i = 0; i < data.length; i++) {
-				selectBox.append('<option value="' + data[i].id + '">'
-						+ data[i].address + '</option>');
+				if (id == data[i].id) {
+					selectBox.append('<option value="' + data[i].id
+							+ '" selected="selected">' + data[i].address
+							+ '</option>');
+				} else {
+					selectBox.append('<option value="' + data[i].id + '">'
+							+ data[i].address + '</option>');
+				}
 			}
 		},
 		error : function(e) {
@@ -185,7 +272,7 @@ var populateSelectBox3 = function() {
 	});
 }
 
-var populateSelectBox2 = function() {
+var populateSelectBox2 = function(id) {
 	// making the ajax call
 	$.ajax({
 		url : "/accountservlet",
@@ -202,9 +289,15 @@ var populateSelectBox2 = function() {
 			selectBox.append('<option value="">Pilih Rekening</option>');
 			// adding all other values
 			for ( var i = 0; i < data.length; i++) {
-				selectBox.append('<option value="' + data[i].id + '">'
-						+ data[i].accountnbr + ' - ' + data[i].bankname
-						+ '</option>');
+				if (id == data[i].id) {
+					selectBox.append('<option value="' + data[i].id
+							+ '" selected="selected">' + data[i].accountnbr
+							+ ' - ' + data[i].bankname + '</option>');
+				} else {
+					selectBox.append('<option value="' + data[i].id + '">'
+							+ data[i].accountnbr + ' - ' + data[i].bankname
+							+ '</option>');
+				}
 			}
 		},
 		error : function(e) {
@@ -312,6 +405,23 @@ var total = function(parms) {
 	});
 	$("#total_detail").text(sum);
 	$("#total_bill").text($("#total_detail").text());
+	if($("#feecheck").prop("checked")) {
+		checkfee();
+	}
+	if($("#ppncheck").prop("checked")) {
+		checkppn();
+	}
+	if($("#pphcheck").prop("checked")) {
+		checkpph();
+	}
+}
+
+var total_detail = function() {
+	var sum = 0;
+	$('#detail-invoice-tbody tr').each(function() {
+		sum += parseFloat($('td:eq(3)', $(this)).text());
+	});
+	$("#total_detail").text(sum);
 }
 
 var total1 = function() {
@@ -434,7 +544,8 @@ var confirm = function(params) {
 		data : parameter,
 		success : function(resp) {
 			var data = resp;
-			$("#bank_account").text(data[1].bankname+" - "+data[1].accountnbr);
+			$("#bank_account").text(
+					data[1].bankname + " - " + data[1].accountnbr);
 			$("#bank_account_id").val(data[1].id);
 			$("#invoice_id").val(data[0].id);
 			$("#invoice_nbr").text(data[0].invoice_nbr);
@@ -451,7 +562,8 @@ var saveconfirm = function() {
 	data[data.length] = new param("id", $("#id").val());
 	data[data.length] = new param("receive_date", $("#receive_date").val());
 	data[data.length] = new param("receive_amount", $("#receive_amount").val());
-	data[data.length] = new param("bank_account_id", $("#bank_account_id").val());
+	data[data.length] = new param("bank_account_id", $("#bank_account_id")
+			.val());
 	data[data.length] = new param("invoice_id", $("#invoice_id").val());
 	// making the ajax call
 	$.ajax({
