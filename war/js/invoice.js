@@ -18,175 +18,210 @@ var param = function(name, value) {
 }
 
 var save = function() {
-	var data = new Array();
-	// collecting the field values from the form
-	if ($("#id").val() == "")
-		data[data.length] = new param("id", "0");
-	else
-		data[data.length] = new param("id", $("#id").val());
-	if ($("#company-select").val() == "")
-		data[data.length] = new param("compaddr-select", "0");
-	else
-		data[data.length] = new param("compaddr-select", $("#compaddr-select")
-				.val());
-	data[data.length] = new param("kwitansi_nbr", $("#kwitansi_nbr").val());
-	data[data.length] = new param("invmonth", $("#invmonth").val());
-	data[data.length] = new param("invyear", $("#invyear").val());
-	if ($("#inv_startdate").val() == "")
-		data[data.length] = new param("inv_startdate", "0");
-	else
-		data[data.length] = new param("inv_startdate", $("#inv_startdate")
-				.val());
-	if ($("#inv_enddate").val() == "")
-		data[data.length] = new param("inv_enddate", "0");
-	else
-		data[data.length] = new param("inv_enddate", $("#inv_enddate").val());
-	if ($("#account-select").val() == "")
-		data[data.length] = new param("account-select", "0");
-	else
-		data[data.length] = new param("account-select", $("#account-select")
-				.val());
-	if ($("#create_date").val() == "")
-		data[data.length] = new param("create_date", "0");
-	else
-		data[data.length] = new param("create_date", $("#create_date").val());
-	if ($("#due_date").val() == "")
-		data[data.length] = new param("due_date", "0");
-	else
-		data[data.length] = new param("due_date", $("#due_date").val());
-	if ($("#fee_management").val() == "")
-		data[data.length] = new param("fee_management", "0");
-	else
-		data[data.length] = new param("fee_management", $("#fee_management")
-				.val());
-	if ($('#ppncheck').is(':checked') == true)
-		data[data.length] = new param("ppn_10", "true");
-	else
-		data[data.length] = new param("ppn_10", "false");
-	if ($('#pphcheck').is(':checked') == true)
-		data[data.length] = new param("pph_23", "true");
-	else
-		data[data.length] = new param("pph_23", "false");
-	if ($("#total_bill").text() == "")
-		data[data.length] = new param("total_bill", "0");
-	else
-		data[data.length] = new param("total_bill", $("#total_bill").text());
+	if (validate($("#company-select").val(), $("#compaddr-select").val(), $(
+			"#invmonth").val(), $("#invyear").val(), $("#inv_startdate").val(),
+			$("#inv_enddate").val(), $("#create_date").val(), $("#due_date")
+					.val(), $("#account-select").val(), $("#total_bill").text()) == false) {
 
-	var row = $("#invoice-detail-table >tbody >tr").length;
-	data[data.length] = new param("detail_row", row);
-	for ( var i = 0; i < row; i++) {
-		data[data.length] = new param("description" + i, $("#description" + i)
-				.val());
-		data[data.length] = new param("qty" + i, $("#qty" + i).val());
-		data[data.length] = new param("price" + i, $("#price" + i).val());
-		data[data.length] = new param("total_price" + i, $("#total_price" + i)
-				.text());
-		data[data.length] = new param("detid" + i, $("#detid" + i).val());
-	}
-	// making the ajax call
-	$.ajax({
-		url : "/invoiceservlet",
-		type : "POST",
-		data : data,
-		success : function(data) {
-			$("#invoice-create").hide();
-			$("#invoice-list").show();
-			$("#message").text("Data telah di simpan");
-			$("#reset-invoice").click();
-			detail(data);
+	} else {
+		var data = new Array();
+		// collecting the field values from the form
+		if ($("#id").val() == "")
+			data[data.length] = new param("id", "0");
+		else
+			data[data.length] = new param("id", $("#id").val());
+		if ($("#company-select").val() == "")
+			data[data.length] = new param("compaddr-select", "0");
+		else
+			data[data.length] = new param("compaddr-select", $(
+					"#compaddr-select").val());
+		data[data.length] = new param("invmonth", $("#invmonth").val());
+		data[data.length] = new param("invyear", $("#invyear").val());
+		if ($("#inv_startdate").val() == "")
+			data[data.length] = new param("inv_startdate", "0");
+		else
+			data[data.length] = new param("inv_startdate", $("#inv_startdate")
+					.val());
+		if ($("#inv_enddate").val() == "")
+			data[data.length] = new param("inv_enddate", "0");
+		else
+			data[data.length] = new param("inv_enddate", $("#inv_enddate")
+					.val());
+		if ($("#account-select").val() == "")
+			data[data.length] = new param("account-select", "0");
+		else
+			data[data.length] = new param("account-select",
+					$("#account-select").val());
+		if ($("#create_date").val() == "")
+			data[data.length] = new param("create_date", "0");
+		else
+			data[data.length] = new param("create_date", $("#create_date")
+					.val());
+		if ($("#due_date").val() == "")
+			data[data.length] = new param("due_date", "0");
+		else
+			data[data.length] = new param("due_date", $("#due_date").val());
+		if ($("#fee_management").val() == "")
+			data[data.length] = new param("fee_management", "0");
+		else
+			data[data.length] = new param("fee_management",
+					$("#fee_management").val());
+		if ($('#ppncheck').is(':checked') == true) {
+			data[data.length] = new param("ppn_10", "true");
+			data[data.length] = new param("no_faktur_pajak", $(
+					"#no_faktur_pajak").val());
+		} else {
+			data[data.length] = new param("ppn_10", "false");
+			data[data.length] = new param("no_faktur_pajak", "-");
 		}
-	});
-	$('#reset-invoice').click();
-	init();
+		if ($('#pphcheck').is(':checked') == true)
+			data[data.length] = new param("pph_23", "true");
+		else
+			data[data.length] = new param("pph_23", "false");
+		if ($("#total_bill").text() == "")
+			data[data.length] = new param("total_bill", "0");
+		else
+			data[data.length] = new param("total_bill", $("#total_bill").text());
+
+		var row = $("#invoice-detail-table >tbody >tr").length;
+		data[data.length] = new param("detail_row", row);
+		for ( var i = 0; i < row; i++) {
+			data[data.length] = new param("description" + i, $(
+					"#description" + i).val());
+			data[data.length] = new param("qty" + i, $("#qty" + i).val());
+			data[data.length] = new param("price" + i, $("#price" + i).val());
+			data[data.length] = new param("total_price" + i, $(
+					"#total_price" + i).text());
+			data[data.length] = new param("detid" + i, $("#detid" + i).val());
+		}
+		// making the ajax call
+		$.ajax({
+			url : "/invoiceservlet",
+			type : "POST",
+			data : data,
+			success : function(data) {
+				if (data > 0) {
+					$("#invoice-create").hide();
+					$("#invoice-list").show();
+					$("#message").text("Data telah di simpan");
+					$("#reset-invoice").click();
+					detail(data);
+				}
+			}
+		});
+		$('#reset-invoice').click();
+		init();
+	}
 }
 
 var edit = function(id) {
 	var parameter = new Array();
 	parameter[parameter.length] = new param('id', id);
-	$.ajax({
-		url : "/invoiceservlet",
-		type : "GET",
-		dataType : "json",
-		data : parameter,
-		success : function(resp) {
-			var data = resp.invoice;
-			$("#id").val(data[0].id);
-			$("#kwitansi_nbr").val(data[0].kwitansi_nbr);
-			$("select[id$=company-select] > option").remove();
-			populateSelectBox(data[3].id, data[2].id);
-			var invdt = data[0].inv_period.split(" ");
-			$("#invmonth").val(invdt[0]);
-			$("#invyear").val(invdt[1]);
-			var orgsdate = $.datepicker.formatDate('dd/mm/yy', new Date(
-					data[0].inv_startdate));
-			$("#inv_startdate").val(orgsdate);
-			var orgedate = $.datepicker.formatDate('dd/mm/yy', new Date(
-					data[0].inv_enddate));
-			$("#inv_enddate").val(orgedate);
-			var orgcdate = $.datepicker.formatDate('dd/mm/yy', new Date(
-					data[0].create_date));
-			$("#create_date").val(orgcdate);
-			var orgddate = $.datepicker.formatDate('dd/mm/yy', new Date(
-					data[0].due_date));
-			$("#due_date").val(orgddate);
-			$("select[id$=account-select] > option").remove();
-			populateSelectBox2(data[1].id);
-			var det = resp.detail;
-			for(var i=0;i<det.length;i++) {
-				var htm = "";
-				htm += "<tr><td><input type='text' id='description"
-						+ i
-						+ "' name='description"
-						+ i
-						+ "' value="+det[i].description+"/></td>"
-						+ "<td><input style='text-align:center;' type='text' id='qty"
-						+ i
-						+ "' name='qty"
-						+ i
-						+ "' value="+det[i].qty+" /></td>"
-						+ "<td><input class='rt' type='text' id='price"
-						+ i
-						+ "' name='price"
-						+ i
-						+ "' onblur='total("
-						+ i
-						+ ")' value="+det[i].price+" /></td>"
-						+ "<td style='text-align: right;' id='total_price"
-						+ i
-						+ "'>"+det[i].total_price+"</td><td style='display:none'><input type='text' id='detid"
-						+ i
-						+ "' name='detid"
-						+ i
-						+ "' value="+det[i].id+" /></td><td><a href='#' class='ui-icon ui-icon-trash ct'>Hapus</a></td></tr>";
-				$("#detail-invoice-tbody").append(htm);
-			}
-			total_detail();
-			$("#total_bill").text(data[0].total_bill);
-			if(data[0].fee_management!=""||data[0].fee_management!="0") {
-				$("#feecheck").prop("checked","checked");
-				$("#feeman").show();
-				$("#fee_management").val(data[0].fee_management);
-				if((data[0].fee_management*100)/$("#total_detail").text()==10) {
-					$("#selectmfee").val("fromsub");
-				} else {
-					$("#selectmfee").val("manualmfee");
-					$("#manmfee").show();
+	$
+			.ajax({
+				url : "/invoiceservlet",
+				type : "GET",
+				dataType : "json",
+				data : parameter,
+				success : function(resp) {
+					var data = resp.invoice;
+					$("#id").val(data[0].id);
+					$("select[id$=company-select] > option").remove();
+					populateSelectBox(data[3].id, data[2].id);
+					var invdt = data[0].inv_period.split(" ");
+					$("#invmonth").val(invdt[0]);
+					$("#invyear").val(invdt[1]);
+					var orgsdate = $.datepicker.formatDate('dd/mm/yy',
+							new Date(data[0].inv_startdate));
+					$("#inv_startdate").val(orgsdate);
+					var orgedate = $.datepicker.formatDate('dd/mm/yy',
+							new Date(data[0].inv_enddate));
+					$("#inv_enddate").val(orgedate);
+					var orgcdate = $.datepicker.formatDate('dd/mm/yy',
+							new Date(data[0].create_date));
+					$("#create_date").val(orgcdate);
+					var orgddate = $.datepicker.formatDate('dd/mm/yy',
+							new Date(data[0].due_date));
+					$("#due_date").val(orgddate);
+					$("select[id$=account-select] > option").remove();
+					populateSelectBox2(data[1].id);
+					var det = resp.detail;
+					for ( var i = 0; i < det.length; i++) {
+						var htm = "";
+						htm += "<tr><td><input type='text' id='description"
+								+ i
+								+ "' name='description"
+								+ i
+								+ "' value="
+								+ det[i].description
+								+ "/></td>"
+								+ "<td><input style='text-align:center;' type='text' id='qty"
+								+ i
+								+ "' name='qty"
+								+ i
+								+ "' value="
+								+ det[i].qty
+								+ " /></td>"
+								+ "<td><input class='rt' type='text' id='price"
+								+ i
+								+ "' name='price"
+								+ i
+								+ "' onblur='total("
+								+ i
+								+ ")' value="
+								+ det[i].price
+								+ " /></td>"
+								+ "<td style='text-align: right;' id='total_price"
+								+ i
+								+ "'>"
+								+ det[i].total_price
+								+ "</td><td style='display:none'><input type='text' id='detid"
+								+ i
+								+ "' name='detid"
+								+ i
+								+ "' value="
+								+ det[i].id
+								+ " /></td><td><a href='#' class='ui-icon ui-icon-trash ct'>Hapus</a></td></tr>";
+						$("#detail-invoice-tbody").append(htm);
+					}
+					total_detail();
+					$("#total_bill").text(data[0].total_bill);
+					if (data[0].fee_management != ""
+							|| data[0].fee_management != "0") {
+						$("#feecheck").prop("checked", "checked");
+						$("#feeman").show();
+						$("#fee_management").val(data[0].fee_management);
+						if ((data[0].fee_management * 100)
+								/ $("#total_detail").text() == 10) {
+							$("#selectmfee").val("fromsub");
+						} else {
+							$("#selectmfee").val("manualmfee");
+							$("#manmfee").show();
+						}
+						$("#total1")
+								.text(
+										parseFloat($("#total_detail").text())
+												+ parseFloat($(
+														"#fee_management")
+														.val()));
+					}
+					if (data[0].ppn_10 == true) {
+						$("#ppncheck").prop("checked", "checked");
+						$("#total2").text(
+								(parseFloat($("#total1").text() * 10) / 100)
+										+ parseFloat($("#total1").text()));
+					}
+					$("#no_faktur_pajak").val(data[0].no_faktur_pajak);
+					if (data[0].pph_23 == true) {
+						$("#pphcheck").prop("checked", "checked");
+						var pph = parseFloat(($("#fee_management").val() * 2) / 100);
+						$("#total_bill").text(
+								parseFloat($("#total_bill").text() - pph));
+					}
+					$("#invoice-list").hide();
+					$("#invoice-create").show();
 				}
-				$("#total1").text(parseFloat($("#total_detail").text())+parseFloat($("#fee_management").val()));
-			}
-			if(data[0].ppn_10==true) {
-				$("#ppncheck").prop("checked","checked");
-				$("#total2").text((parseFloat($("#total1").text()*10)/100)+parseFloat($("#total1").text()));
-			}
-			if(data[0].pph_23==true) {
-				$("#pphcheck").prop("checked","checked");
-				var pph = parseFloat(($("#fee_management").val() * 2) / 100);
-				$("#total_bill").text(parseFloat($("#total_bill").text() - pph));
-			}
-			$("#invoice-list").hide();
-			$("#invoice-create").show();
-		}
-	});
+			});
 }
 
 // function to populate the select box which takes input as id of the selectbox
@@ -318,15 +353,18 @@ var populateList = function() {
 					var data = resp;
 					var htm = '';
 					var confirmlink = '';
+					var bayar = '';
 					var editlink = '';
 					if (data.length > 0) {
 						for ( var i = 0; i < data.length; i++) {
 							// creating a row
 							if (data[i].is_confirm == "true") {
 								confirmlink = 'Confirm';
+								bayar = 'Sudah';
 							} else {
 								confirmlink = '<a href="#" class="edit-entity" onclick=\'confirm("'
 										+ data[i].id + '")\'>Confirm</a>';
+								bayar = 'Belum';
 							}
 							editlink = '<a href="#" class="edit-entity" onclick=\'edit("'
 									+ data[i].id + '")\'>Edit</a>';
@@ -337,18 +375,24 @@ var populateList = function() {
 									+ data[i].invoice_nbr
 									+ '</td><td>'
 									+ data[i].company
-									+ '</td><td align="center" class="borright">'
+									+ '</td><td align="left" class="borright">'
 									+ data[i].inv_period
 									+ '</td><td align="center" class="borright">'
 									+ data[i].create_date
 									+ '</td><td align="center" class="borright">'
 									+ data[i].due_date
 									+ '</td><td align="right" class="borright">'
-									+ data[i].total_bill + '</td>';
+									+ data[i].total_bill
+									+ '</td><td align="center" class="borright">'
+									+ bayar + '</td>';
 							htm += '<td align="center">'
 									+ editlink
 									+ '/<a href="#" class="edit-entity" onclick=\'detail("'
-									+ data[i].id + '")\'>Detail</a>/'
+									+ data[i].id
+									+ '")\'>Detail</a>/<a href="#" onclick=\'kwitansi("'
+									+ data[i].id
+									+ '")\'>Kwitansi</a>/<a href="#" onclick=\'faktur("'
+									+ data[i].id + '")\'>Faktur Pajak</a>/'
 									+ confirmlink + '</td></tr>';
 						}
 					} else {
@@ -405,13 +449,13 @@ var total = function(parms) {
 	});
 	$("#total_detail").text(sum);
 	$("#total_bill").text($("#total_detail").text());
-	if($("#feecheck").prop("checked")) {
+	if ($("#feecheck").prop("checked")) {
 		checkfee();
 	}
-	if($("#ppncheck").prop("checked")) {
+	if ($("#ppncheck").prop("checked")) {
 		checkppn();
 	}
-	if($("#pphcheck").prop("checked")) {
+	if ($("#pphcheck").prop("checked")) {
 		checkpph();
 	}
 }
@@ -482,9 +526,12 @@ var checkselectedmfee = function() {
 var checkppn = function() {
 	if ($('#ppncheck').is(':checked') == true) {
 		total2();
+		$("#no_fak_tr").show();
 	} else {
 		$("#total2").text("");
 		$("#total_bill").text(parseFloat($("#total_bill").text()) - ppn);
+		$("#no_faktur_pajak").val("");
+		$("#no_fak_tr").hide();
 	}
 }
 
@@ -513,25 +560,32 @@ var detail = function(params) {
 	var content = "<embed id=\"pdf\" src=\"/detail?id=" + params
 			+ "\" width=\"100%\" height=\"100%\" type=\"application/pdf\" />";
 	// get the screen height and width
-	var maskHeight = $(document).height();
-	var maskWidth = $(window).width();
 
-	// calculate the values for center alignment
-	var dialogLeft = (maskWidth / 2) - ($('#dialog-box').width() / 2);
-
-	// assign values to the overlay and dialog box
-	$('#dialog-overlay').css({
-		height : maskHeight,
-		width : maskWidth
-	}).show();
-	$('#dialog-box').css({
-		top : "10%",
-		left : dialogLeft
-	}).show();
+	/*
+	 * // calculate the values for center alignment var dialogLeft = (maskWidth /
+	 * 2) - ($('#dialog-box').width() / 2); // assign values to the overlay and
+	 * dialog box $('#dialog-overlay').css({ height : maskHeight, width :
+	 * maskWidth }).show(); $('#dialog-box').css({ top : "10%", left :
+	 * dialogLeft }).show();
+	 */
 
 	// display the message
 	$('#detail-invoice').html(content);
+	$("#detail-invoice").dialog("open");
+}
 
+var kwitansi = function(params) {
+	var content = "<embed id=\"pdf\" src=\"/kwitansi?id=" + params
+			+ "\" width=\"100%\" height=\"100%\" type=\"application/pdf\" />";
+	$('#kwitansi').html(content);
+	$("#kwitansi").dialog("open");
+}
+
+var faktur = function(params) {
+	var content = "<embed id=\"pdf\" src=\"/faktur?id=" + params
+			+ "\" width=\"100%\" height=\"100%\" type=\"application/pdf\" />";
+	$('#faktur').html(content);
+	$("#faktur").dialog("open");
 }
 
 var confirm = function(params) {
@@ -545,11 +599,12 @@ var confirm = function(params) {
 		success : function(resp) {
 			var data = resp;
 			$("#bank_account").text(
-					data[1].bankname + " - " + data[1].accountnbr);
-			$("#bank_account_id").val(data[1].id);
-			$("#invoice_id").val(data[0].id);
-			$("#invoice_nbr").text(data[0].invoice_nbr);
-			$("#total_tagihan").val(data[0].total_bill);
+					data.invoice[1].bankname + " - "
+							+ data.invoice[1].accountnbr);
+			$("#bank_account_id").val(data.invoice[1].id);
+			$("#invoice_id").val(data.invoice[0].id);
+			$("#invoice_nbr").text(data.invoice[0].invoice_nbr);
+			$("#total_tagihan").val(data.invoice[0].total_bill);
 			$("#invoice-list").hide();
 			$("#confirm-invoice").show();
 		}
@@ -577,4 +632,49 @@ var saveconfirm = function() {
 			$("#reset-invoice-confirm").click();
 		}
 	});
+}
+
+var validate = function(comp, compaddr, month, year, startdate, enddate,
+		invdate, duedate, bank, bill) {
+	if (comp == null || comp == "") {
+		alert("Perusahaan belum di pilih");
+		return false;
+	}
+	if (compaddr == null || compaddr == "") {
+		alert("Alamat Perusahaan belum di pilih");
+		return false;
+	}
+	if (month == null || month == "") {
+		alert("Bulan tagihan belum di pilih");
+		return false;
+	}
+	if (year == null || year == "") {
+		alert("Tahun tagihan belum di pilih");
+		return false;
+	}
+	if (startdate == null || startdate == "") {
+		alert("Tgl awal belum di pilih");
+		return false;
+	}
+	if (enddate == null || enddate == "") {
+		alert("Tgl akhir belum di pilih");
+		return false;
+	}
+	if (invdate == null || invdate == "") {
+		alert("Tgl invoice belum di pilih");
+		return false;
+	}
+	if (duedate == null || duedate == "") {
+		alert("Tgl jatuh tempo belum di pilih");
+		return false;
+	}
+	if (bank == null || bank == "") {
+		alert("Rekening bank belum di pilih");
+		return false;
+	}
+	if (bill == null || bill == "0" || bill == "") {
+		alert("Detail bank belum di isi");
+		return false;
+	}
+	return true;
 }

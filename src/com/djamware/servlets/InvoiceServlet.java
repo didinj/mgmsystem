@@ -60,7 +60,6 @@ public class InvoiceServlet extends HttpServlet {
 			Key<Invoice> invkey = new Key<Invoice>(Invoice.class,id);
 			List<InvoiceDetail> invdet = ofy.query(InvoiceDetail.class).filter("invoice",invkey).list();
 			Iterator<InvoiceDetail> iterator = invdet.iterator();
-			Map<String, String> map = new HashMap<String, String>();
 			while (iterator.hasNext()) {
 				InvoiceDetail idt = (InvoiceDetail) iterator.next();
 				detlist.add(idt);
@@ -104,7 +103,6 @@ public class InvoiceServlet extends HttpServlet {
 		resp.setContentType("text/plain");
 		PrintWriter out = resp.getWriter();
 
-		String kwitansi_nbr = req.getParameter("kwitansi_nbr");
 		Date create_date = null, due_date = null, inv_startdate = null, inv_enddate = null;
 		String cdate = req.getParameter("create_date");
 		try {
@@ -130,10 +128,14 @@ public class InvoiceServlet extends HttpServlet {
 		Float fee_management = Float.parseFloat(req
 				.getParameter("fee_management"));
 		boolean ppn_10, pph_23;
-		if (req.getParameter("ppn_10").equalsIgnoreCase("true"))
+		String no_faktur_pajak;
+		if (req.getParameter("ppn_10").equalsIgnoreCase("true")) {
 			ppn_10 = true;
-		else
+			no_faktur_pajak = "010.900-13.99806"+decf.format(Integer.parseInt(req.getParameter("no_faktur_pajak")));
+		} else {
 			ppn_10 = false;
+			no_faktur_pajak = req.getParameter("no_faktur_pajak");
+		}		 
 		if (req.getParameter("pph_23").equalsIgnoreCase("true"))
 			pph_23 = true;
 		else
@@ -167,15 +169,19 @@ public class InvoiceServlet extends HttpServlet {
 		Company comp = ofy.get(Company.class, ca.getCompany().getId());
 		String invoice_nbr = nbr + "/MGM-" + comp.getCompany_initial()
 				+ "/SEC/" + months[cmonth] + "/" + cyear;
+		String kwitansi_nbr = nbr + "/KWI/MGM-" + comp.getCompany_initial()
+				+ "/SEC/" + months[cmonth] + "/" + cyear;
 		boolean is_confirm = false;
 		Long invid = null;
+		Invoice invs = null;
+		Key<Invoice> keyinvoice = null;
 		if (req.getParameter("id").equalsIgnoreCase("0")
 				|| req.getParameter("id") == null) {
 			ofy = ObjectifyService.beginTransaction();
 			try {
-				Invoice invs = new Invoice(compaddr, kwitansi_nbr, invoice_nbr,
+				invs = new Invoice(compaddr, kwitansi_nbr, invoice_nbr,
 						inv_period, inv_startdate, inv_enddate, create_date,
-						due_date, fee_management, ppn_10, pph_23, total_bill,
+						due_date, fee_management, ppn_10, no_faktur_pajak, pph_23, total_bill,
 						bankAccount, is_confirm);
 				Key<Invoice> invkey = ofy.put(invs);
 				ofy.getTxn().commit();
@@ -185,16 +191,15 @@ public class InvoiceServlet extends HttpServlet {
 				if (ofy.getTxn().isActive())
 					ofy.getTxn().rollback();
 			}
+			keyinvoice = new Key<Invoice>(Invoice.class, invid);
 			out.println(invid);
 		} else {
 			Long id = Long.parseLong(req.getParameter("id"));
 			ofy = ObjectifyService.beginTransaction();
 			try {
-				Invoice invs = ofy.get(Invoice.class, id);
+				invs = ofy.get(Invoice.class, id);
 				if (!invs.getCompaddr().equals(compaddr))
 					invs.setCompaddr(compaddr);
-				if (!invs.getKwitansi_nbr().equals(kwitansi_nbr))
-					invs.setKwitansi_nbr(kwitansi_nbr);
 				if (!invs.getInv_period().equals(inv_period))
 					invs.setInv_period(inv_period);
 				if (!invs.getInv_startdate().equals(inv_startdate))
@@ -211,6 +216,8 @@ public class InvoiceServlet extends HttpServlet {
 					invs.setPph_23(pph_23);
 				if (!equals(invs.isPpn_10()))
 					invs.setPpn_10(ppn_10);
+				if (!invs.getNo_faktur_pajak().equals(no_faktur_pajak))
+					invs.setNo_faktur_pajak(no_faktur_pajak);
 				if (!invs.getFee_management().equals(fee_management))
 					invs.setFee_management(fee_management);
 				if (!invs.getTotal_bill().equals(total_bill))
@@ -223,12 +230,12 @@ public class InvoiceServlet extends HttpServlet {
 				if (ofy.getTxn().isActive())
 					ofy.getTxn().rollback();
 			}
-			out.println("Data " + invid + " telah di update");
+			keyinvoice = new Key<Invoice>(Invoice.class, id);
+			out.println(id);
 		}
 
 		Integer detrow = Integer.parseInt(req.getParameter("detail_row"));
 		for (Integer i = 0; i < detrow; i++) {
-			Key<Invoice> keyinvoice = new Key<Invoice>(Invoice.class, invid);
 			String description = req.getParameter("description" + i);
 			Integer qty = Integer.parseInt(req.getParameter("qty" + i));
 			Float price = Float.parseFloat(req.getParameter("price" + i));

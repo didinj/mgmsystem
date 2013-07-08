@@ -19,6 +19,7 @@ public class Invoice {
 	Date due_date;
 	Float fee_management;
 	boolean ppn_10;
+	String no_faktur_pajak;
 	boolean pph_23;
 	Float total_bill;
 	Key<BankAccount> bankAccount;
@@ -30,7 +31,7 @@ public class Invoice {
 	public Invoice(Key<CompanyAddress> compaddr, String kwitansi_nbr,
 			String invoice_nbr, String inv_period, Date inv_startdate,
 			Date inv_enddate, Date create_date, Date due_date,
-			Float fee_management, boolean ppn_10, boolean pph_23,
+			Float fee_management, boolean ppn_10, String no_faktur_pajak, boolean pph_23,
 			Float total_bill, Key<BankAccount> bankAccount, boolean is_confirm) {
 		this();
 		this.compaddr = compaddr;
@@ -43,6 +44,7 @@ public class Invoice {
 		this.due_date = due_date;
 		this.fee_management = fee_management;
 		this.ppn_10 = ppn_10;
+		this.no_faktur_pajak = no_faktur_pajak;
 		this.pph_23 = pph_23;
 		this.total_bill = total_bill;
 		this.bankAccount = bankAccount;
@@ -127,6 +129,14 @@ public class Invoice {
 
 	public void setPpn_10(boolean ppn_10) {
 		this.ppn_10 = ppn_10;
+	}
+
+	public String getNo_faktur_pajak() {
+		return no_faktur_pajak;
+	}
+
+	public void setNo_faktur_pajak(String no_faktur_pajak) {
+		this.no_faktur_pajak = no_faktur_pajak;
 	}
 
 	public boolean isPph_23() {

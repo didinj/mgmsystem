@@ -118,6 +118,22 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>Detail</servlet-name>
 		<url-pattern>/detail</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>Kwitansi</servlet-name>
+		<servlet-class>com.djamware.servlets.KwitansiServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Kwitansi</servlet-name>
+		<url-pattern>/kwitansi</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>Faktur</servlet-name>
+		<servlet-class>com.djamware.servlets.FakturpajakServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Faktur</servlet-name>
+		<url-pattern>/faktur</url-pattern>
+	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>

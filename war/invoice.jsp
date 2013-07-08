@@ -27,6 +27,7 @@
 					<th class="borright">TGL INVOICE</th>
 					<th class="borright">JATUH TEMPO</th>
 					<th class="borright">TOTAL INVOICE</th>
+					<th class="borright">DI BAYAR</th>
 					<th>TINDAKAN</th>
 				</tr>
 			</thead>
@@ -39,11 +40,6 @@
 		<form id="invoice-form">
 			<input type="hidden" id="id" name="id" />
 			<table id="invoice-table-create" class="ui-corner-all">
-				<tr>
-					<td>Nomor Kwitansi</td>
-					<td><input type="text" name="kwitansi_nbr" id="kwitansi_nbr" /></td>
-					<td colspan="2">&nbsp;</td>
-				</tr>
 				<tr>
 					<td>Perusahaan</td>
 					<td><select id="company-select" name="company-select"
@@ -137,9 +133,9 @@
 				<tr>
 					<td>Manajemen Fee</td>
 					<td><input type="checkbox" id="feecheck" onclick="checkfee()" />&nbsp;<span
-						id="feeman" style="display: none"><select class="hwidth" id="selectmfee"
-							onchange="checkselectedmfee()"><option value="fromsub">10%
-									Subtotal</option>
+						id="feeman" style="display: none"><select class="hwidth"
+							id="selectmfee" onchange="checkselectedmfee()"><option
+									value="fromsub">10% Subtotal</option>
 								<option value="manualmfee">Input Manual</option></select></span></td>
 					<td><span id="manmfee" style="display: none"><input
 							type="text" id="fee_management" name="fee_management"
@@ -159,6 +155,10 @@
 					<td>TOTAL II</td>
 					<td id="total2"></td>
 				</tr>
+				<tr style="display:none" id="no_fak_tr">
+					<td>Nomor Faktur</td>
+					<td><input type="text" name="no_faktur_pajak" id="no_faktur_pajak" /></td>
+				</tr>
 				<tr>
 					<td>PPH 23</td>
 					<td><input type="checkbox" id="pphcheck" onclick="checkpph()" /></td>
@@ -166,9 +166,9 @@
 					<td id="total_bill"></td>
 				</tr>
 				<tr>
-					<td colspan="4" style="border-top: 2px solid #bdd3fe;"><input type="button" id="save-button"
-						value="Simpan" onclick="save()" /><input type="reset"
-						id="reset-invoice" style="display: none" /></td>
+					<td colspan="4" style="border-top: 2px solid #bdd3fe;"><input
+						type="button" id="save-button" value="Simpan" onclick="save()" /><input
+						type="reset" id="reset-invoice" style="display: none" /></td>
 				</tr>
 			</table>
 		</form>
@@ -182,7 +182,8 @@
 				<tr>
 					<td width="18%">Rekening Bank</td>
 					<td width="42%" id="bank_account"></td>
-					<td width="30%"><input type="text" name="total_tagihan" id="total_tagihan" style="display:none;" /></td>
+					<td width="30%"><input type="text" name="total_tagihan"
+						id="total_tagihan" style="display: none;" /></td>
 				</tr>
 				<tr>
 					<td>Nomor Invoice</td>
@@ -196,7 +197,9 @@
 				</tr>
 				<tr>
 					<td>Total Penerimaan</td>
-					<td><input type="text" name="receive_amount" id="receive_amount" onblur="$('#selisih').text($(this).val()-$('#total_tagihan').val())" /></td>
+					<td><input type="text" name="receive_amount"
+						id="receive_amount"
+						onblur="$('#selisih').text($(this).val()-$('#total_tagihan').val())" /></td>
 					<td>&nbsp;</td>
 				</tr>
 				<tr>
@@ -211,15 +214,22 @@
 				</tr>
 				<tr>
 					<td colspan="2"><input type="button" id="save-button"
-						value="Konfirmasi" onclick="saveconfirm()" style="width: 100px !important;" /><input type="reset"
-						id="reset-invoice-confirm" style="display: none" /><input type="reset"
-						id="bank_account_id" style="display: none" /><input type="reset"
-						id="invoice_id" style="display: none" /></td>
-						<td>&nbsp;</td>
+						value="Konfirmasi" onclick="saveconfirm()"
+						style="width: 100px !important;" /><input type="reset"
+						id="reset-invoice-confirm" style="display: none" /><input
+						type="reset" id="bank_account_id" style="display: none" /><input
+						type="reset" id="invoice_id" style="display: none" /></td>
+					<td>&nbsp;</td>
 				</tr>
 			</table>
 		</form>
 	</div>
+
+	<div id="detail-invoice"></div>
+	
+	<div id="kwitansi"></div>
+	
+	<div id="faktur"></div>
 
 	<div id="loading"
 		style="display: none; position: fixed; top: 50%; left: 50%; margin-top: -17px; margin-left: -17px; width: 100%; height: 100%;">
@@ -246,14 +256,47 @@
 				return false;
 			});
 
-			$('#loading').bind("ajaxSend", function() {
+			$('#loading').ajaxStart(function() {
 				$(this).show();
-			}).bind("ajaxComplete", function() {
+			}).ajaxStop(function() {
 				$(this).hide();
 			});
 
 			$(".button").button();
 			$("#add-detail,#save-button").button();
+			var maskHeight = $(document).height();
+			var maskWidth = $(window).width();
+			$("#detail-invoice").dialog({
+				autoOpen: false,
+				modal : true,
+				height: maskHeight,
+				width: maskWidth,
+				title: "Invoice Detail",
+				close: function( event, ui ) {
+					init();
+				}
+			});
+			$("#kwitansi").dialog({
+				autoOpen: false,
+				modal : true,
+				height: 600,
+				width: 800,
+				title: "Kwitansi",
+				close: function( event, ui ) {
+					init();
+				}
+			});
+			$("#faktur").dialog({
+				autoOpen: false,
+				modal : true,
+				height: maskHeight,
+				width: maskWidth,
+				title: "Faktur Pajak",
+				close: function( event, ui ) {
+					init();
+				}
+			});
+			$("#no_faktur_pajak").mask("999");
 		});
 	</script>
 </body>

@@ -6,9 +6,9 @@
 	<sessions-enabled>true</sessions-enabled>
 
 	<static-files>
-		<include path="/images/**" expiration="1d" />
-		<include path="/js/**" expiration="1d" />
-		<include path="/css/**" expiration="1d" />
+		<include path="/images/**" expiration="14d" />
+		<include path="/js/**" expiration="14d" />
+		<include path="/css/**" expiration="14d" />
 	</static-files>
 
 	<!-- By default, App Engine sends requests serially to a given web server. 

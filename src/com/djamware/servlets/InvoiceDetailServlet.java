@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.djamware.model.BankAccount;
+import com.djamware.model.Company;
 import com.djamware.model.CompanyAddress;
 import com.djamware.model.Invoice;
 import com.djamware.model.InvoiceDetail;
@@ -23,7 +24,9 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
@@ -31,6 +34,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 
@@ -54,34 +58,23 @@ public class InvoiceDetailServlet extends HttpServlet {
 		DateFormat month = new SimpleDateFormat("MMM yyyy");
 		NumberFormat nf = NumberFormat.getCurrencyInstance();
 		resp.setContentType("application/pdf");
-		Document document = new Document(PageSize.A4);
 		Objectify ofy = ObjectifyService.begin();
 		Long id = Long.parseLong(req.getParameter("id"));
 		Invoice invoice = ofy.query(Invoice.class).filter("id", id).get();
 		try {
-			PdfWriter.getInstance(document, resp.getOutputStream());
+			Document document = new Document(PageSize.A4, 36, 36, 80, 36);
+			PdfWriter writer = PdfWriter.getInstance(document,
+					resp.getOutputStream());
+			writer.setPageEvent(new HeaderFooter());
+
 			document.open();
-			/* Header */
-			Image image = Image.getInstance("images/mgm_kop.JPG");
-			image.scalePercent(80);
-			PdfPTable table = new PdfPTable(1);
-			table.setTotalWidth(600);
-			table.setLockedWidth(true);
-			table.setWidths(new float[] { 40 });
-			table.setHorizontalAlignment(Element.ALIGN_CENTER);
-			table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-			PdfPCell headcell;
-			headcell = new PdfPCell(image);
-			headcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			headcell.setBorder(Rectangle.NO_BORDER);
-			table.addCell(headcell);
-			document.add(table);
+
+			/* Content */
 			LineSeparator logoline = new LineSeparator(1, 100, null,
 					Element.ALIGN_CENTER, -2);
 			logoline.setLineWidth(2);
 			document.add(logoline);
-
-			/* Content */
+			
 			Paragraph spacer = new Paragraph();
 			spacer.add(new Paragraph("", subTitleFont));
 			document.add(spacer);
@@ -126,10 +119,12 @@ public class InvoiceDetailServlet extends HttpServlet {
 
 			document.add(spacer);
 
-			CompanyAddress ca = ofy.get(CompanyAddress.class, invoice.getCompaddr().getId());
+			CompanyAddress ca = ofy.get(CompanyAddress.class, invoice
+					.getCompaddr().getId());
+			Company co = ofy.get(Company.class, ca.getCompany().getId());
 			Paragraph sendto = new Paragraph();
 			sendto.add(new Paragraph("Ditujukan ke:"));
-			sendto.add(new Paragraph(ca.getCompany().getName(), boldFont));
+			sendto.add(new Paragraph(co.getCompany_name(), boldFont));
 			sendto.add(new Paragraph(ca.getAddress()));
 			sendto.add(new Paragraph(ca.getCompany_city() + ", "
 					+ ca.getCompany_province()));
@@ -169,8 +164,9 @@ public class InvoiceDetailServlet extends HttpServlet {
 			amountcell.setPadding(5f);
 			invamount.addCell(amountcell);
 			amountcell = new PdfPCell(new Phrase(
-					"Biaya pelayanan pengamanan \n" + ca.getCompany().getName()
-							+ " \n \ndengan perincian terlampir"));
+					"Biaya pelayanan pengamanan \n" + co.getCompany_name()
+							+ ", " + ca.getAddress()
+							+ "\n \ndengan perincian terlampir"));
 			amountcell.setBorder(Rectangle.BOX);
 			amountcell.setPadding(5f);
 			invamount.addCell(amountcell);
@@ -208,7 +204,8 @@ public class InvoiceDetailServlet extends HttpServlet {
 
 			document.add(spacer);
 
-			BankAccount bacc = ofy.get(BankAccount.class, invoice.getBankAccount().getId());
+			BankAccount bacc = ofy.get(BankAccount.class, invoice
+					.getBankAccount().getId());
 			Paragraph bankacc = new Paragraph();
 			bankacc.add(new Paragraph(
 					"Pembayaran melalui transfer Bank (diluar biaya administrasi Bank) ke :"));
@@ -223,7 +220,7 @@ public class InvoiceDetailServlet extends HttpServlet {
 			rekcell.setBorder(Rectangle.NO_BORDER);
 			rekcell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			norek.addCell(rekcell);
-			rekcell = new PdfPCell(new Phrase(": "+bacc.getBankname(),
+			rekcell = new PdfPCell(new Phrase(": " + bacc.getBankname(),
 					boldFont));
 			rekcell.setBorder(Rectangle.NO_BORDER);
 			rekcell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -232,7 +229,8 @@ public class InvoiceDetailServlet extends HttpServlet {
 			rekcell.setBorder(Rectangle.NO_BORDER);
 			rekcell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			norek.addCell(rekcell);
-			rekcell = new PdfPCell(new Phrase(": "+bacc.getAccountnbr(), boldFont));
+			rekcell = new PdfPCell(new Phrase(": " + bacc.getAccountnbr(),
+					boldFont));
 			rekcell.setBorder(Rectangle.NO_BORDER);
 			rekcell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			norek.addCell(rekcell);
@@ -240,7 +238,7 @@ public class InvoiceDetailServlet extends HttpServlet {
 			rekcell.setBorder(Rectangle.NO_BORDER);
 			rekcell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			norek.addCell(rekcell);
-			rekcell = new PdfPCell(new Phrase(": "+bacc.getAccountname(),
+			rekcell = new PdfPCell(new Phrase(": " + bacc.getAccountname(),
 					boldFont));
 			rekcell.setBorder(Rectangle.NO_BORDER);
 			rekcell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -330,29 +328,12 @@ public class InvoiceDetailServlet extends HttpServlet {
 			sign.addCell(signcell);
 			document.add(sign);
 			document.add(spacer);
+			document.add(spacer);
+			document.add(spacer);
 			Paragraph cc = new Paragraph();
 			cc.add(new Paragraph("Cc: Arsip"));
 			document.add(cc);
 			document.add(spacer);
-			document.add(spacer);
-			document.add(spacer);
-			document.add(spacer);
-
-			Image footimage = Image.getInstance("images/mgmfoot.png");
-			footimage.scalePercent(50);
-
-			PdfPTable foottbl = new PdfPTable(1);
-			foottbl.setWidthPercentage(100);
-			float[] footwidth = { 40 };
-			foottbl.setWidths(footwidth);
-			foottbl.setHorizontalAlignment(Element.ALIGN_CENTER);
-			PdfPCell fotcell;
-			fotcell = new PdfPCell(footimage);
-			fotcell.setBorder(Rectangle.NO_BORDER);
-			fotcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			fotcell.setPadding(5f);
-			foottbl.addCell(fotcell);
-			document.add(foottbl);
 
 			// 2nd page
 			document.newPage();
@@ -363,17 +344,8 @@ public class InvoiceDetailServlet extends HttpServlet {
 			headtbl.setWidths(new float[] { 40 });
 			headtbl.setHorizontalAlignment(Element.ALIGN_CENTER);
 			headtbl.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-			PdfPCell headcell2;
-			headcell2 = new PdfPCell(image);
-			headcell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-			headcell2.setBorder(Rectangle.NO_BORDER);
-			headtbl.addCell(headcell2);
-			document.add(headtbl);
 
-			LineSeparator logoline2 = new LineSeparator(1, 100, null,
-					Element.ALIGN_CENTER, -2);
-			logoline2.setLineWidth(2);
-			document.add(logoline2);
+			document.add(logoline);
 
 			// Content page 2
 			document.add(spacer);
@@ -402,7 +374,7 @@ public class InvoiceDetailServlet extends HttpServlet {
 			halcell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			hal.addCell(halcell);
 			halcell = new PdfPCell(new Phrase(": Pelayanan Pengamanan "
-					+ ca.getCompany().getName(), boldFont));
+					+ co.getCompany_name(), boldFont));
 			halcell.setBorder(Rectangle.NO_BORDER);
 			halcell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			hal.addCell(halcell);
@@ -439,7 +411,7 @@ public class InvoiceDetailServlet extends HttpServlet {
 
 			PdfPTable dettbl = new PdfPTable(6);
 			dettbl.setWidthPercentage(100);
-			float[] detwidth = { 0.7f, 3.7f, 1.2f, 2f, 2.2f,0.2f };
+			float[] detwidth = { 0.7f, 3.7f, 1.2f, 2f, 2.2f, 0.2f };
 			dettbl.setWidths(detwidth);
 			dettbl.setHorizontalAlignment(Element.ALIGN_CENTER);
 			PdfPCell detcell;
@@ -532,7 +504,8 @@ public class InvoiceDetailServlet extends HttpServlet {
 				detcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				detcell.setPadding(5f);
 				dettbl.addCell(detcell);
-				detcell = new PdfPCell(new Phrase(nf.format(invdtl.getTotal_price())));
+				detcell = new PdfPCell(new Phrase(nf.format(invdtl
+						.getTotal_price())));
 				detcell.setBorder(Rectangle.LEFT);
 				detcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				detcell.setPadding(5f);
@@ -740,7 +713,7 @@ public class InvoiceDetailServlet extends HttpServlet {
 			}
 			Float gtotal = 0f;
 			if (invoice.isPph_23() == true) {
-				Float pph23 = (float) (invoice.getFee_management()*2)/100;
+				Float pph23 = (float) (invoice.getFee_management() * 2) / 100;
 				gtotal = total2 - pph23;
 				detcell = new PdfPCell(new Phrase(""));
 				detcell.setBorder(Rectangle.LEFT);
@@ -762,7 +735,8 @@ public class InvoiceDetailServlet extends HttpServlet {
 				detcell.setHorizontalAlignment(Element.ALIGN_CENTER);
 				detcell.setPadding(5f);
 				dettbl.addCell(detcell);
-				detcell = new PdfPCell(new Phrase("( "+nf.format(pph23)+" )"));
+				detcell = new PdfPCell(new Phrase("( " + nf.format(pph23)
+						+ " )"));
 				detcell.setBorder(Rectangle.LEFT);
 				detcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				detcell.setPadding(5f);
@@ -772,7 +746,7 @@ public class InvoiceDetailServlet extends HttpServlet {
 				detcell.setHorizontalAlignment(Element.ALIGN_CENTER);
 				detcell.setPadding(5f);
 				dettbl.addCell(detcell);
-				detcell = new PdfPCell(new Phrase("Jumlah Total",boldFont));
+				detcell = new PdfPCell(new Phrase("Jumlah Total", boldFont));
 				detcell.setBorder(Rectangle.TOP);
 				detcell.setColspan(4);
 				detcell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -790,7 +764,7 @@ public class InvoiceDetailServlet extends HttpServlet {
 				dettbl.addCell(detcell);
 			} else {
 				gtotal = total2;
-				detcell = new PdfPCell(new Phrase("Jumlah Total",boldFont));
+				detcell = new PdfPCell(new Phrase("Jumlah Total", boldFont));
 				detcell.setBorder(Rectangle.TOP);
 				detcell.setColspan(4);
 				detcell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -810,27 +784,28 @@ public class InvoiceDetailServlet extends HttpServlet {
 			document.add(dettbl);
 			document.add(spacer);
 			document.add(spacer);
-			
+
 			PdfPTable notetbl = new PdfPTable(3);
 			notetbl.setWidthPercentage(60);
-			float[] notewidth = { 1f,3f,6f };
+			float[] notewidth = { 1f, 3f, 6f };
 			notetbl.setWidths(notewidth);
 			notetbl.setHorizontalAlignment(Element.ALIGN_LEFT);
 			PdfPCell notecell;
-			notecell = new PdfPCell(new Phrase("Catatan :",uline));
+			notecell = new PdfPCell(new Phrase("Catatan :", uline));
 			notecell.setBorder(Rectangle.NO_BORDER);
 			notecell.setColspan(2);
 			notecell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			notetbl.addCell(notecell);
 			notecell = new PdfPCell(new Phrase(""));
-			notecell.setBorder(Rectangle.NO_BORDER);			
+			notecell.setBorder(Rectangle.NO_BORDER);
 			notecell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			notetbl.addCell(notecell);
 			notecell = new PdfPCell(new Phrase(""));
 			notecell.setBorder(Rectangle.NO_BORDER);
 			notecell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			notetbl.addCell(notecell);
-			notecell = new PdfPCell(new Phrase("Pembayaran dilakukan melalui Transfer Bank :"));
+			notecell = new PdfPCell(new Phrase(
+					"Pembayaran dilakukan melalui Transfer Bank :"));
 			notecell.setBorder(Rectangle.NO_BORDER);
 			notecell.setColspan(2);
 			notecell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -843,7 +818,8 @@ public class InvoiceDetailServlet extends HttpServlet {
 			notecell.setBorder(Rectangle.NO_BORDER);
 			notecell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			notetbl.addCell(notecell);
-			notecell = new PdfPCell(new Phrase(": "+bacc.getAccountname(),boldFont));
+			notecell = new PdfPCell(new Phrase(": " + bacc.getAccountname(),
+					boldFont));
 			notecell.setBorder(Rectangle.NO_BORDER);
 			notecell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			notetbl.addCell(notecell);
@@ -855,7 +831,8 @@ public class InvoiceDetailServlet extends HttpServlet {
 			notecell.setBorder(Rectangle.NO_BORDER);
 			notecell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			notetbl.addCell(notecell);
-			notecell = new PdfPCell(new Phrase(": "+bacc.getAccountnbr(),boldFont));
+			notecell = new PdfPCell(new Phrase(": " + bacc.getAccountnbr(),
+					boldFont));
 			notecell.setBorder(Rectangle.NO_BORDER);
 			notecell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			notetbl.addCell(notecell);
@@ -867,7 +844,8 @@ public class InvoiceDetailServlet extends HttpServlet {
 			notecell.setBorder(Rectangle.NO_BORDER);
 			notecell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			notetbl.addCell(notecell);
-			notecell = new PdfPCell(new Phrase(": "+bacc.getBankname(),boldFont));
+			notecell = new PdfPCell(new Phrase(": " + bacc.getBankname(),
+					boldFont));
 			notecell.setBorder(Rectangle.NO_BORDER);
 			notecell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			notetbl.addCell(notecell);
@@ -875,24 +853,53 @@ public class InvoiceDetailServlet extends HttpServlet {
 			document.add(spacer);
 			document.add(spacer);
 			document.add(spacer);
-			
-			PdfPTable foottbl2 = new PdfPTable(1);
-			foottbl2.setWidthPercentage(100);
-			float[] footwidth2 = { 40 };
-			foottbl2.setWidths(footwidth2);
-			foottbl2.setHorizontalAlignment(Element.ALIGN_CENTER);
-			PdfPCell fotcell2;
-			fotcell2 = new PdfPCell(footimage);
-			fotcell2.setBorder(Rectangle.NO_BORDER);
-			fotcell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-			fotcell2.setPadding(5f);
-			foottbl2.addCell(fotcell2);
-			document.add(foottbl2);
 
+			document.close();
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}
-		document.close();
 	}
 
+	/** Inner class to add a header and a footer. */
+	class HeaderFooter extends PdfPageEventHelper {
+		public void onEndPage(PdfWriter writer, Document document) {
+			try {
+				Rectangle page = document.getPageSize();
+				
+				PdfPTable head = new PdfPTable(1);				
+				Image headimg = Image.getInstance("images/mgm_kop.jpg");
+				headimg.scalePercent(70);
+
+				PdfPCell headcell = new PdfPCell(headimg);
+				headcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+				headcell.setBorder(Rectangle.NO_BORDER);
+
+				head.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+				head.addCell(headcell);
+				head.setTotalWidth(page.getWidth() - document.leftMargin()
+						- document.rightMargin());
+				head.writeSelectedRows(0, -1, document.leftMargin(),
+						page.getHeight() - document.topMargin() + head.getTotalHeight(),
+						writer.getDirectContent());
+
+				PdfPTable foot = new PdfPTable(1);
+				Image footimg = Image.getInstance("images/mgmfoot.png");
+				footimg.scalePercent(90);
+
+				PdfPCell footcell = new PdfPCell(footimg);
+				footcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+				footcell.setBorder(Rectangle.NO_BORDER);
+
+				foot.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+				foot.addCell(footcell);
+				foot.setTotalWidth(page.getWidth() - document.leftMargin()
+						- document.rightMargin());
+				foot.writeSelectedRows(0, -1, document.leftMargin(),
+						document.bottomMargin(), writer.getDirectContent());
+
+			} catch (Exception e) {
+				throw new ExceptionConverter(e);
+			}
+		}
+	}
 }

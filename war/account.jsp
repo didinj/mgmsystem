@@ -11,7 +11,6 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>MGM Invoice : Bank Account</title>
-<script src='js/jquery-1.7.2.min.js'></script>
 <script src='js/account.js'></script>
 </head>
 <body>
@@ -57,6 +56,12 @@
 			</table>
 		</form>
 	</div>
+	<div id="loading"
+		style="display: none; position: fixed; top: 50%; left: 50%; margin-top: -17px; margin-left: -17px; width: 100%; height: 100%;">
+		<p>
+			<img src="images/ajax-loader.gif" />
+		</p>
+	</div>
 	<script type="text/javascript">
 		$(window).load(function() {
 			init();
@@ -65,6 +70,11 @@
 		$(document).ready(function() {
 			$(".button").button();
 			$("#add-addr,#save-button,#edit").button();
+			$('#loading').ajaxStart(function() {
+				$(this).show();
+			}).ajaxStop(function() {
+				$(this).hide();
+			});
 		});
 	</script>
 </body>

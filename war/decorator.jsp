@@ -7,7 +7,7 @@
 	rel="stylesheet">
 <link href="css/header.css" rel="stylesheet">
 <link href="css/invoice.css" rel="stylesheet">
-<script src="js/jquery-1.9.1.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.0/jquery.min.js"></script>
 <script src="js/jquery-ui-1.10.3.custom.js"></script>
 <script src='js/jquery.maskedinput.min.js'></script>
 <script src='js/invoice.js'></script>
